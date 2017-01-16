@@ -1,0 +1,28 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+a{text-decoration:none;float:left;clear:right;}
+table{width:600px;margin:0 auto;text-align:center;} 
+.title_w{width:80px;}
+table tr td{border-bottom:1px solid #ddd;border-left:1px solid #ddd;}
+
+.table_reset{font-size:12px;font-family:'微软雅黑';line-height:30px;}
+.border_left_none{border-left:none;}
+.border_bottom_none{border-bottom:none;}
+.border_top{border-top:1px solid #ddd;}
+.border_right{border-right:1px solid #ddd;}
+.title_{font-size:24px;padding:20px 0 30px 0;font-family:'宋体';}
+.title_ span{border-bottom:1px solid #000;padding:0 10px 5px 10px;margin-bottom:20px;}
+
+.table_2{margin-top:-1px;}
+.input_w{width:200px;text-align:left;padding-left:5px;}
+table tr td select{border:0;line-height:30px;display:block;float:left;padding:4px;}
+table tr td input{border:0;line-height:12px;display:block;float:left;padding:4px;}
+.td_w{width:106px;}
+.input_bottom{width:200px;}
+.botton{padding:0 20px;background:#52627c;color:#fff;margin: 20px 10px; }
+.botton:hover{background:#4e5e78;color:#fff;}
+.center{float:right;width:260px;height:100%;}
+.border_none_exbottom td{border-top:none;border-left:none;border-right:none;}
+.text_left{text-align:left;padding-left:5px;}

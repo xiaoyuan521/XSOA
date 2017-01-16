@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+.menu_1{margin-bottom:2px;width:100%;height:33px;background-repeat:no-repeat;cursor:pointer;}
+.menu_1_normal {background-image:url(../img/menu/bg_menu_1_normal.png);}
+.menu_1_onmouse{background-image:url(../img/menu/bg_menu_1_onmouse.png);}
+.menu_1_select {background-image:url(../img/menu/bg_menu_1_select.png);}
+.menu_1 span {color:#FFF; padding-left:25px;padding-top:8px;display:block}
+
+.menu_2 {margin-bottom:2px;width:100%;height:33px;background-repeat:no-repeat;cursor:pointer;}
+.menu_2_normal {background-image:url(../img/menu/bg_menu_2_normal.png);}
+.menu_2_onmouse{background-image:url(../img/menu/bg_menu_2_onmouse.png);}
+.menu_2_select {background-image:url(../img/menu/bg_menu_2_select.png);}
+.menu_2 span {color:#000; padding-left:25px;padding-top:10px;display:block}
+
+.ztree li button.switch {visibility:hidden; width:1px;}
+.ztree li button.switch.roots_docu {visibility:visible; width:16px;}
+.ztree li button.switch.center_docu {visibility:visible; width:16px;}
+.ztree li button.switch.bottom_docu {visibility:visible; width:16px;}
+      
+#btnHomePage{width:100%;height:35px;color:#F98900;background-image:url(../img/menu/bg_homepage.gif);background-repeat:no-repeat;padding-top:6px; cursor:pointer;}
+
+

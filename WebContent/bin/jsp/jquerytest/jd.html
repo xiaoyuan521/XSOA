@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head>
+<link rel="stylesheet" href="./libs/dijit/themes/claro/claro.css">
+<style type="text/css">
+@import url(./libs/dojox/form/resources/BusyButton.css);
+</style>
+<script>
+	dojoConfig = {
+		parseOnLoad : true
+	}
+</script>
+<script src="./libs/dojo/dojo.js"></script>
+
+<link type="text/css" href="css/jd.css" rel="stylesheet" />
+<script>
+	dojoConfig = {
+		parseOnLoad : true
+	}
+</script>
+<script src="./js/jd.js"></script>
+</head>
+<body class="claro">
+  <div id="order">
+    <div id="left">京东订单：000001</div>
+    <div id="left">
+      <b>输入收货地址：</b><input type="radio" id="radio1" name='c' value="0" />使用默认地址
+    </div>
+    <div id="defaultAddress"></div>
+    <div id="radio2Area">
+      <input type="radio" id="radio2" name='c' value="1" />新地址
+    </div>
+    <div id="newAddress">
+      <input type="text" id="province" value="" style="width: 90px; height: 25px" data-dojo-type="dijit.form.TextBox" />省
+      <input type="text" id="city" value="" style="width: 90px; height: 25px" data-dojo-type="dijit.form.TextBox" />市 <input
+        type="text" id="district" value="" style="width: 90px; height: 25px" data-dojo-type="dijit.form.TextBox" />
+    </div>
+    <div id="confirmArea">
+      <button id="confirm"></button>
+    </div>
+    <div id="left">
+      <b>你的收货地址是：</b><font id="show" color="grey" style="font-size: 10px">XX省 XX市 XX区 XXXXX</font>
+    </div>
+    <div id="enlargeReduceArea">
+      <button id="enlarge" data-dojo-type="dijit/form/Button"></button>
+      <button id="reduce" data-dojo-type="dijit/form/Button"></button>
+    </div>
+  </div>
+</body>
+</html>

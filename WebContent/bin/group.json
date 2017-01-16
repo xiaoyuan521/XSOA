@@ -1,0 +1,33 @@
+{
+    "status": 1,
+    "msg": "ok",
+    "data": [
+        {
+            "name": "我的群",
+            "nums": 1,
+            "id": 1,
+            "item": [
+                {
+                    "id": "101",
+                    "name": "狼人群",
+                    "face": "../../images/wolf.jpg"
+                }
+            ]
+        },
+
+        {
+            "name": "系统群",
+            "nums": 1,
+            "id": 2,
+            "item": [
+                {
+                    "id": "102",
+                    "name": "管理群",
+                    "face": "../../images/admin.jpg"
+                }
+            ]
+        }
+
+
+    ]
+}

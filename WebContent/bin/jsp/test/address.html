@@ -1,0 +1,141 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>收货地址</title>
+<link rel="stylesheet" href="css/address.css" type="text/css">
+<link rel="stylesheet" href="./dojo/dijit/themes/claro/claro.css">
+<style type="text/css">
+@import url(./dojo/dojox/form/resources/BusyButton.css);
+@import url(./dojo/dijit/themes/tundra/tundra.css);
+</style>
+</head>
+
+<script>dojoConfig = {parseOnLoad: true}</script>
+<script type="text/javascript" src="./dojo/dojo/dojo.js" data-dojo-config="isDebug: 1, async: 1, parseOnLoad: 1"></script>
+<script type="text/javascript">
+//加载控件
+require(["dojo/dom", "dojo/on", "dojo/query", "dojo/request", "dojo/dom-style", "dijit/form/RadioButton",
+	"dojox/form/BusyButton", "dijit/form/Button", "dojo/domReady!"],
+	function(dom, on, query, request, domStyle, RadioButton, BusyButton, Button){
+		//txt读入地址
+		var txtAddress = dom.byId("txtAddress");
+		//手动输入地址
+		var newAddress = dom.byId("newAddress");
+		//默认显示地址
+		var defaultAddress = dom.byId("defaultAddress");
+		//页面初始化
+		defaultAddress.innerHTML = "XX省 XX市 XX区 XXXXX";
+		domStyle.set(newAddress, "display", "none");
+		domStyle.set(dom.byId("defaddress"), "checked", "checked");
+		/**
+         * 加载外部文件都
+         */
+		request.get("./files/address.txt").then(
+			function(response){
+				txtAddress.innerHTML = response;
+			},
+			function(error){
+				txtAddress.innerHTML = error;
+			}
+		);
+
+    	/**
+         * 点击使用默认地址
+         */
+    	on(dom.byId("defaddress"), "click", function() {
+    		request.get("./files/address.txt").then(function(response){
+    			txtAddress.innerHTML = response;
+			});
+    		domStyle.set(newAddress, "display", "none");
+    		domStyle.set(txtAddress, "display", "block");
+        });
+
+		/**
+         * 点击新地址
+         */
+    	on(dom.byId("newaddress"), "click", function() {
+    		domStyle.set(txtAddress, "display", "none");
+    		domStyle.set(newAddress, "display", "block");
+    	});
+
+		var defaultAddress = dom.byId("defaultAddress");
+		/**
+         * 确定按钮点击事件
+         */
+		var button = new dojox.form.BusyButton({
+			id: "btnConfirm",
+			busyLabel: "确定",
+			timeout: 3000,
+			onClick: function(){
+				if (query("[name='addr']")[0].checked == true) {
+					defaultAddress.innerHTML = dojo.query("#txtAddress").attr("innerHTML");
+				}else{
+					defaultAddress.innerHTML = dom.byId("txtProvince").value+"省"+dom.byId("txtCity").value
+					+"市"+dom.byId("txtArea").value;
+				}
+            }
+		}, "btnConfirm");
+
+		/**
+         * 字体控制按钮点击事件
+         */
+		var myButton = new Button({
+			label: "字体放大",
+			onClick: function(){
+				if(dom.byId("btnFontcontrol").text == "字体放大") {
+					alert("1");
+				}else {
+					//dom.byId("btnFontcontrol").setLabel("Chargeback failed...", 2000);
+					//dom.byId("btnFontcontrol").setLabel("字体缩小", 2000);
+					//dojo.query("#btnFontcontrol").setLabel("字体缩小", 2000);
+					alert(dojo.query("#btnFontcontrol").label);
+					alert(dom.byId("btnFontcontrol").innerHTML);
+				}
+				//dom.byId("result1").innerHTML += "Thank you! ";
+			}
+		}, "btnFontcontrol");
+});
+</script>
+<body class="claro">
+  <div class="main">
+	<div>
+	  <p>京东订单:000001</p>
+	</div>
+	<div class="layout address-one">
+	  <span>&nbsp;<b>输入收货地址：</b></span>
+	</div>
+	<div class="layout">
+	  <div>
+		<input data-dojo-type="dijit.form.RadioButton" type="radio" id="defaddress" name="addr"/>
+        <label  for="defaddress">使用默认地址</label>
+    </div><br>
+	  <div id="txtAddress" class="padding"></div><br>
+	  <div>
+		<input data-dojo-type="dijit.form.RadioButton" type="radio" id="newaddress" name="addr"/>
+	    <label for="newaddress">新地址</label>
+    </div><br>
+	  <div id="newAddress">
+	  	<span class="padding">
+	  	  <input type="text" id="txtProvince" class="txt-short">&nbsp;省&nbsp;
+	  	  <input type="text" id="txtCity" class="txt-short">&nbsp;市&nbsp;
+	  	  <input type="text" id="txtArea" class="txt-long">
+	  	</span>
+	  </div><br>
+	  <div class="center">
+        <button data-dojo-type="dojox.form.BusyButton" id="btnConfirm">确定</button>
+	  </div><br>
+	</div>
+	<div class="clear"></div>
+    <div>
+    	<div class="layout address-two line">
+    	  <span>&nbsp;<b>你的收货地址是：</b></span>
+    	</div>
+    	<div id="defaultAddress" class="line result-addr"></div>
+    </div>
+    <div>
+	   <button data-dojo-type="dojox.form.BusyButton" id="btnFontcontrol">字体放大</button>
+    </div>
+  </div>
+</body>
+</html>

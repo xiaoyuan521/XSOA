@@ -1,0 +1,46 @@
+body {
+  font-size: 15px;
+}
+.main {
+  width: 600px;
+  height: 300px;
+  border: 1px solid;
+  margin-top: 15px;
+  margin-left: 15px;
+  padding-left: 15px;
+}
+.padding {
+  padding-left:25px;
+}
+.center {
+  text-align:center;
+}
+.txt-short {
+  width: 80px;
+}
+.txt-long {
+  width: 120px;
+}
+.layout {
+  float: left;
+}
+.address-one {
+  width: 130px;
+}
+.address-two {
+  width: 150px;
+}
+.content {
+  width: 450px;
+}
+.line {
+  height: 20px;
+  line-height: 20px;
+}
+.result-addr {
+  width:450px;
+  float:right;
+}
+.clear {
+  clear:both;
+}

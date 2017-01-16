@@ -1,0 +1,38 @@
+@charset "utf-8";
+/* CSS Document */
+.gongcheng_sq {margin-top:10px;}
+.gongcheng_sq table{line-height:22px;width:800px;margin:0 auto;text-align:center;background:#fff;} 
+.gongcheng_sq table tr td span{font-size:17px;font-family:'微软雅黑';}
+.gongcheng_sq table tr td{border-bottom:1px solid #ddd;border-left:1px solid #ddd;font-size:12px;padding:0;}
+.bor_top{border-top:1px solid #ddd;}
+.bor_right{border-right:1px solid #ddd;}
+.gongcheng_sq table tr td select{border:0;line-height:22px;display:block;float:left;padding:4px;}
+.gongcheng_sq table tr td select option{margin:0px 4px;}
+.gongcheng_sq table tr td input{border:0;line-height:22px;width:200px;padding:0 4px 2px 4px;}
+.gongcheng_sq table tr td textarea{width:99%;height:22px;border:0;resize: none;overflow: hidden;line-height:22px;}
+.gongcheng_cg table{line-height:22px;width:900px;margin:0 auto;font-size:12px;;} 
+.gongcheng_cgnr{width:80%;height:280px; overflow:auto; border:1px solid #DDDDDD;margin:0 auto;}
+.gongcheng_cg table tr td span{font-size:18px;font-family:'微软雅黑';}
+
+.table_reset{font-size:12px;font-family:'微软雅黑';line-height:30px;}
+a{text-decoration:none;float:left;clear:right;}
+table{width:600px;margin:0 auto;text-align:center;} 
+.title_w{width:80px;}
+table tr td{border-bottom:1px solid #ddd;border-left:1px solid #ddd;}
+.border_left_none{border-left:none;}
+.border_bottom_none{border-bottom:none;}
+.border_top{border-top:1px solid #ddd;}
+.border_right{border-right:1px solid #ddd;}
+.table_2{margin-top:-1px;}
+.title_{font-size:24px;padding:20px 0 30px 0;font-family:'宋体';}
+.title_ span{border-bottom:1px solid #000;padding:0 10px 5px 10px;margin-bottom:20px;}
+.input_w{width:200px;text-align:left;padding-left:5px;}
+table tr td select{border:0;line-height:30px;display:block;float:left;padding:4px;}
+table tr td input{border:0;line-height:12px;display:block;float:left;padding:4px;}
+.td_w{width:106px;}
+.input_bottom{width:200px;}
+.botton{padding:0 20px;background:#52627c;color:#fff;margin: 20px 10px; }
+.botton:hover{background:#4e5e78;color:#fff;}
+.center{float:right;width:260px;height:100%;}
+.border_none_exbottom td{border-top:none;border-left:none;border-right:none;}
+.text_left{text-align:left;padding-left:5px;}

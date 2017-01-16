@@ -1,0 +1,167 @@
+@CHARSET "UTF-8";
+.table_reset {
+	font-size: 12px;
+	font-family: '微软雅黑';
+	line-height: 30px;
+	/* border:1px solid #c1c1c1; */
+	/* background-color:#c1c1c1;  */
+}
+
+.title_ {
+	font-size: 24px;
+	padding: 20px 0 30px 0;
+	font-family: '宋体';
+}
+
+.title_ span {
+	border-bottom: 1px solid #000;
+	padding: 0 10px 5px 10px;
+	margin-bottom: 20px;
+}
+
+table {
+	width: 600px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+table tr th {
+	width: 90px;
+	border-bottom: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	background-color:#D1D9DE; 
+}
+
+table tr td {
+	width: 100px;
+	border-bottom: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+}
+
+table tr td input {
+	border: 0;
+	line-height: 100%;
+	display: block;
+	float: left;
+	padding: 4px;
+}
+
+.checkboxstyle label{
+	display: block;
+	margin-top:8px;
+}
+
+.checkboxstyle label span{
+	float: left;
+	display: block;
+	margin:-5px 5px 0 0;
+	width:90px;
+	text-align:left;
+}
+
+table tr td textarea {
+	border: 0;
+	resize: none;
+	width: 80%;
+	height: 80px;
+}
+
+.border_left_none {
+	border-left: none;
+}
+
+.border_bottom_none {
+	border-bottom: none;
+}
+.border_top {
+	border-top: 1px solid #ddd;
+}
+
+.border_right {
+	border-right: 1px solid #ddd;
+}
+
+.table_2 {
+	margin-top: -1px;
+}
+
+.rightstyle {
+	float: right;
+	width: 410px;
+	height: 100%;
+}
+.leftstyle {
+	float: left;
+	width: 250px;
+	height: 100%;
+	margin: 20px;
+}
+
+.leftstyle span{
+	padding: 0 10px;
+	font-weight:bold;
+}
+
+select{
+	width:200px;
+	margin: 5px 5px;
+}
+
+
+.border_none_exbottom td {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
+
+.botton {
+	padding: 0 20px;
+	background: #52627c;
+	color: #fff;
+	margin: 20px 10px;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+.bottonChange {
+	padding: 0 10px;
+	background: #52627c;
+	color: #fff;
+	margin: 5px 5px;
+	border-radius: 4px;
+}
+
+.bottonChange:hover {
+	background: #4e5e78;
+	color: #fff;
+	cursor:pointer;
+	border-radius: 4px;
+}
+
+.bottonDisable {
+	padding: 0 20px;
+	background: #a8a2a5;
+	color: #fff;
+	margin: 20px 10px;
+	border-radius: 4px;
+}
+
+.bottonDisable:hover {
+	background: #a8a2a5;
+	color: #fff;
+	cursor:default;
+	border-radius: 4px;
+}
+
+
+.botton:hover {
+	background: #4e5e78;
+	color: #fff;
+	cursor:pointer;
+}
+
+a {
+	text-decoration: none;
+	float: left;
+	clear: right;
+}

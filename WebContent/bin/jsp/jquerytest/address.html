@@ -1,0 +1,67 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>收货地址</title>
+<link rel="stylesheet" href="css/address.css" type="text/css">
+<link rel="stylesheet" href="./dojo/dijit/themes/claro/claro.css">
+
+<style type="text/css">
+@import url(./dojo/dojox/form/resources/BusyButton.css);
+</style>
+</head>
+<script type="text/javascript" src="./dojo/dojo/dojo.js" data-dojo-config="isDebug: 1, async: 1, parseOnLoad: 1"></script>
+<script type="text/javascript" src="./js/address.js"></script>
+<body class="claro">
+  <div class="main">
+    <div>
+      <p>京东订单:000001</p>
+    </div>
+    <div class="layout address-one">
+      <span>
+        &nbsp;<b>输入收货地址：</b>
+      </span>
+    </div>
+    <div class="layout content">
+      <div>
+        <input data-dojo-type="dijit.form.RadioButton" type="radio" id="defaddress" name="addr" />
+        <label for="defaddress">使用默认地址</label>
+      </div>
+      <br>
+      <div id="txtAddress" class="padding"></div>
+      <br>
+      <div>
+        <input data-dojo-type="dijit.form.RadioButton" type="radio" id="newaddress" name="addr" />
+        <label for="newaddress">新地址</label>
+      </div>
+      <br>
+      <div id="newAddress">
+        <span class="padding">
+          <input type="text" id="txtProvince" class="txt-short" data-dojo-type="dijit.form.TextBox" />
+          <label for="txtProvince">省</label>
+          <input type="text" id="txtCity" class="txt-short" data-dojo-type="dijit.form.TextBox" />
+          <label for="txtCity">市</label>
+          <input type="text" id="txtArea" class="txt-long" data-dojo-type="dijit.form.TextBox" />
+        </span>
+      </div>
+      <br>
+      <div class="center">
+        <button data-dojo-type="dojox.form.BusyButton" id="btnConfirm">确定</button>
+      </div>
+      <br>
+    </div>
+    <div class="clear"></div>
+    <div>
+      <div class="layout address-two line">
+        <span>
+          &nbsp;<b>你的收货地址是：</b>
+        </span>
+      </div>
+      <div id="defaultAddress" class="line result-addr"></div>
+    </div>
+    <div>
+      <input data-dojo-type="dojox.form.Button" type="button" id="btnFontcontrol" value="字体放大" />
+    </div>
+  </div>
+</body>
+</html>

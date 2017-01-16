@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+/* INPUT文本中加入图标样式Start */
+.input-icon-style {
+	height: 22px;
+	line-height: 22px;
+	padding-right: 20px;
+	border: 1px solid #C6C6C6;
+	background-repeat: no-repeat;
+	background-position: right center;
+	background-color: #fff;
+	outline: 0;
+	
+}
+/* 申请者 */
+.apply-icon{
+	background-image: url(../img/common/ic_user.png);
+}
+/* INPUT文本中加入图标样式End */

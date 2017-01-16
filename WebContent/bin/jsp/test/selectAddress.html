@@ -1,0 +1,42 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>选择收货地址</title>
+<link rel="stylesheet" href="./css/selectAddress.css">
+</head>
+<script type="text/javascript" src="./libs/dojo/dojo.js" data-dojo-config="isDeBug: 1, async: 1, parseOnLoad: 1"></script>
+<script type="text/javascript" src="./js/selectAddress.js"></script>
+<body>
+  <div class="defaultClass">
+    <p>京东订单：000001</p>
+    <div>
+      <span class="boldFont">输入收货地址：</span>
+      <div class="defaultAddressDiv">
+        <input type="radio" name="address" id="defaultAddressRadio" checked="checked">
+        使用默认地址
+        <div id="defaultAddress" class="defaultAddress"></div>
+      </div>
+      <div class="newAddressDiv">
+        <input type="radio" name="address" id="newAddressRadio">
+        新地址
+        <div id="newAddress" class="newAddress" style="display: none;">
+          <input type="text" id="inputProvinceTxt" style="width: 60px;">
+          省
+          <input type="text" id="inputCityTxt" style="width: 60px;">
+          市
+          <input type="text" id="inputDetailedTxt" style="width: 150px;">
+        </div>
+      </div>
+      <div id="sureAddress" class="sureAddress">
+        <input type="button" id="sureAddressBtn" value="确定">
+      </div>
+    </div>
+    <div class="showAddressDiv">
+      <span class="boldFont">你的收货地址是：</span>
+      <span class="narrowFont" id="addressInfo">XX省&nbsp;XX市&nbsp;XX区&nbsp;XXXXX</span>
+    </div>
+    <input type="button" value="字体放大" id="enlargedFontBtn" style="width: 80px; height: 25px;">
+    <input type="button" value="字体缩小" id="narrowFontBtn" style="width: 80px; height: 25px; display: none;">
+  </div>
+</body>
+</html>

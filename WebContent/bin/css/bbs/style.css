@@ -1,0 +1,59 @@
+body{ font-size:12px;color:#000000; padding:0px; margin:0px;}
+a{text-decoration: none;}
+ul,ol,li{list-style-type: none; margin:0px; padding:0px;}
+img{border:0px;}
+
+.in1{ border:0px; width:87px; height:31px; background:url(../images/but1.gif);}
+.in1-1{ border:0px; width:87px; height:31px; background:url(../images/but2.gif);}
+.in2{font-size: 12px;line-height: 18px;height: 18px; width:180px; color:#102037;}
+.in3{font-size: 12px;line-height: 18px;height: 18px; width:110px; color:#102037;}
+.in4{font-size: 12px;line-height: 18px;height: 18px; width:80px; color:#102037;}
+.in5{ border:0px; width:82px; height:30px; background:url(../images/but3.gif); color:#FFFFFF;}
+.in5173{ border:0px; width:150px; height:150px; background:url(../images/jiji.png); }
+.in55{ border:0px; width:75px; height:26px; background:url(../images/but3.gif); color:#FFFFFF;}
+.in55_1{ border:0px; width:80px; height:22px; background:url(../images/but3.gif); color:#FFFFFF;}
+.in555{ border:0px; width:45px; height:26px; background:url(../images/but3.gif); color:#FFFFFF;}
+.in6{ border:0px; width:57px; height:30px; background:url(../images/but4.gif);}
+.if6{
+    background: url("../images/but40.gif") repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 0 none;
+    height: 30px;
+    width: 57px;
+}
+.in7{font-size: 12px;line-height: 24px;height: 24px; width:200px; color:#102037; border:1px solid #D9D9DE;}
+.in8{height: 28px; width:90px;border:1px solid #D9D9DE;}
+.in9{height: 28px; width:190px;border:1px solid #D9D9DE;}
+
+a.ls1:link,a.ls1:visited,a.ls1:active{color: #26589D;}
+a.ls1:hover {color:#6F86A6;}
+a.ls2:link,a.ls2:visited,a.ls2:active{color: #ffffff;}
+a.ls2:hover {color:#c1c1c1;}
+
+.wo1{ color:#930C12;}
+.wo2{ color:#4A4A4A;}
+.wo3{ color:#818284;}
+.wo1{ color:#930C12;font-size:12px;}
+.wo2{ color:#4A4A4A;font-size:12px;}
+.wo3{ color:#818284;font-size:12px;}
+.wo4{ font-family:"ﾎ｢ﾈ�ﾑﾅｺﾚ"; font-size:20px;}
+.wo5{ font-size:14px;}
+.wo6{ font-family:"ﾎ｢ﾈ�ﾑﾅｺﾚ"; font-size:28px; line-height:45px;}
+.wo61{ font-family:"ﾎ｢ﾈ�ﾑﾅｺﾚ"; font-size:25px; line-height:43px;}
+.wo7{ color: #32373B;line-height:30px;font-size:12px;}
+.wo8{ color:#FFFFFF;font-size:12px;}
+
+.login {margin: 0px auto; width:1081px;}
+.logo1 {height: 42px;width: 151px;margin: 60px 0px 20px 16px;}
+.banner1 {background-image: url(../images/banner.gif);height: 368px;width: 1081px;}
+.bbd {width:310px; height:180px; float:right; margin-right:30px; padding-top:120px; line-height:32px;}
+.foot {height: 40px; font-family:"ﾎ｢ﾈ�ﾑﾅｺﾚ"; font-size:14px;}
+.top {background-image: url(../images/bg1.gif);height: 73px;width: 1000px;background-repeat: repeat-x; background-position:center;}
+
+
+.con1 {height: 500px;width: 95%; margin:8px 0px 0px 8px; color:#32373B; font-size:12px;}
+.con1 select {margin: 5px 0px 5px 10px; border:1px solid #7F9DB9;}
+.con1 input {margin-left:10px;	margin-right: 4px;}
+.con1 textarea {margin-left:10px; width:500px; height:100px; border:1px solid #7F9DB9; }
+.wo8 input {height: 10px;width: 10px;}
+.xk{height: 10px;width: 10px;}
+.xk2{height: 15px;width: 15px;}

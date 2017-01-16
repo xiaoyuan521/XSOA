@@ -1,0 +1,25 @@
+@CHARSET "UTF-8";
+*:focus {outline: none;}
+.back_top{background:url(../img/login/back_top.jpg);font-size:14px;color:#999;line-height:30px;font-family:'微软雅黑';border-bottom:1px solid #d7dfe1;}
+.back_top span{padding:0 20px;}
+.footer{text-align:center;}
+.footer img{padding:5px 0;width:219px;height:21px;}
+.main{background:url(../img/login/background_07.jpg);height:585px;margin:0 auto;}
+.header{background:url(../img/login/background_01.jpg) center;height:132px;}
+.background3{background:url(../img/login/background_02.jpg) center;height:64px;}
+.background4{background:url(../img/login/background_03.jpg) center;height:50px;}
+.background5{background:url(../img/login/background_04.jpg) center;height:48px;}
+.inputContent{background:url(../img/login/background_05.jpg) center;height:76px;}
+.button{background:url(../img/login/background_06.jpg) center;height:94px;}
+.background8{background:url(../img/login/background_08.jpg) center;height:121px;}
+.nameandpassword{width:400px;height:50px;margin:0 auto;position:relative;left:20px;font-size:14px;color:#999;line-height:25px;}
+.nameandpassword input{border:0;background:#eee;width:230px;float:left;}
+.username{margin:2px 0 0 20px;}
+.password{margin:5px 0 0 20px;}
+.nameandpassword span{display:block;float:left;width:60px;}
+.loginbottom{width:120px;height:35px;margin:0 auto;position:relative;top:36px;left:-55px;font-size:14px;color:#fff;line-height:35px;text-align:center;}
+.loginbottom span:hover{text-shadow:1px 1px 1px #000;}
+.loginbottom span{display:block;}
+.loginbottom a{display:block;color:#ea7903;position:relative;top:-35px;left:130px;font-family:'微软雅黑';}
+.loginbottom span:active{position:relative;left:1px;top:1px;}
+.wenzimiaoshu{position:relative;;left:-228px;color:#999;position:relative;white-space:nowrap;font-size:13px;}

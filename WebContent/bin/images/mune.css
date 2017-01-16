@@ -1,0 +1,29 @@
+.arrowlistmenu { width:174px;}
+.arrowlistmenu .menuheader {
+	color: #B9B9B9;
+	margin: 0px;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 30px;
+	height: 30px;
+	font-weight: normal;
+	background-image: url(LeftOneBg.gif);
+	width: 174px;
+	padding-top:0px;/*»ðºü*/
+	padding-top:0px 0px 0px 10px\0;/*IE8¼°ÆäËüä¯ÀÀÆ÷*/
+
++padding-top:0px 0px 0px 10px;/*IE7*/
+	_padding-top:0px 0px 0px 10px;/*IE6*/
+	padding-left: 10px;
+
+
+
+
+
+}
+.arrowlistmenu .openheader { background-image: url(LeftOpenBg.gif); height:30px; line-height:30px;color: #000; font-size:14px;font-weight: normal;width: 174px;}
+.arrowlistmenu ul {list-style-type: none;padding: 0; margin: 0px; }
+.arrowlistmenu ul li a {color: #c1c1c1; display: block;padding-left: 45px;text-decoration: none;font-weight: normal;height: 30px;line-height: 30px;font-size: 12px; width:174px;
+background: url(LeftTwoBg.gif) no-repeat;}
+.menuscroll {background-color: #000099;width: 30px; height:100%;}
+.Left {width:174px; }
