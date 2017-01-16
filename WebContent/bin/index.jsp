@@ -290,7 +290,7 @@ function strJsonToJsonByGroup() {
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 交流论坛</li>
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 排位系统</li>
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 狼人瞬间</li>
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> web聊天</li>
+                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> web聊天1111</li>
                     </ul>
                     <strong>还没有账号？ <a href="#">立即注册&raquo;</a></strong>
                 </div>
