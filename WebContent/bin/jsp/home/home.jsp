@@ -29,7 +29,6 @@
 <script type="text/javascript" src="<%=basePath%>/bin/js/menu.js"></script>
 <script type="text/javascript" src="<%=basePath%>/bin/plugin/layer/layer.min.js"></script>
 <script type="text/javascript">
-var basePath="<%=basePath%>";
 window.onload=function(){
 	var w = window.screen.width;
 	var h = window.screen.height;

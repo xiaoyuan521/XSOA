@@ -426,13 +426,15 @@ xxim.getGroups = function(param){
 //消息接收
 xxim.getMessage = function(event){
     var node = xxim.node, log = {};
-    var keys = xxim.nowchat.type + xxim.nowchat.id;
+    //var keys = xxim.nowchat.type + xxim.nowchat.id;
     var obj=eval("("+event.data+")");
     var content = obj.content;
     var userid = obj.userid;
+    var usertype = obj.type;
     var time = obj.time;
     var username = obj.username;
     var userface = obj.userface;
+    var keys = usertype + userid;
     //聊天模版
     log.html = function(param, type){
         return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
@@ -485,6 +487,7 @@ xxim.transmit = function(){
     log.send = function(){
         var data = {
             content: node.imwrite.val(),
+            type: xxim.nowchat.type,
             toid: xxim.nowchat.id,
             mine:true,
             userid: config.user.id,
@@ -500,6 +503,35 @@ xxim.transmit = function(){
             websocket.send(JSON.stringify(data));
             //此处皆为模拟
             var keys = xxim.nowchat.type + xxim.nowchat.id;
+            if (xxim.nowchat.id != "101" && xxim.nowchat.id != "102" && xxim.nowchat.id != config.user.id) {
+                log.html = function(param, type){
+                    return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
+                        +'<div class="layim_chatuser">'
+                            + function(){
+                                if(type === 'me'){
+                                    return '<span class="layim_chattime">'+ param.time +'</span>'
+                                           +'<span class="layim_chatname">'+ param.name +'</span>'
+                                           +'<img src="'+ param.face +'" >';
+                                } else {
+                                    return '<img src="'+ param.face +'" >'
+                                           +'<span class="layim_chatname">'+ param.name +'</span>'
+                                           +'<span class="layim_chattime">'+ param.time +'</span>';
+                                }
+                            }()
+                        +'</div>'
+                        +'<div class="layim_chatsay">'+ param.content +'<em class="layim_zero"></em></div>'
+                    +'</li>';
+                };
+                log.imarea = xxim.chatbox.find('#layim_area'+ keys);
+                log.imarea.append(log.html({
+                    time: getChatTime(),
+                    name: config.user.name,
+                    face: config.user.face,
+                    content: data.content
+                }, 'me'));
+                node.imwrite.val('').focus();
+                log.imarea.scrollTop(log.imarea[0].scrollHeight);
+            }
             /*websocket.onmessage = function(event){
                 var obj=eval("("+event.data+")");
                 var content = obj.content;

@@ -102,6 +102,7 @@ public class MyWebSocket{
         toMessage.put("time",time);
         toMessage.put("username",jsonObject.getString("username"));
         toMessage.put("userface",jsonObject.getString("userface"));
+        toMessage.put("type", jsonObject.getString("type"));
 
         switch (id) {
             case "101"://狼群
