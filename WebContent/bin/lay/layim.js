@@ -8,7 +8,48 @@
  */
 
 //;!function(win, undefined){
+var chatContent;
+function startListener(websocket){
+    if (websocket) {
+      //连接发生错误的回调方法
+        websocket.onerror = function(){
+            console.log("error");
+        };
+
+        //连接成功建立的回调方法
+        websocket.onopen = function(event){
+            console.log("open");
+        };
+
+        //接收到消息的回调方法
+        /*websocket.onmessage = function(event){
+            console.log(event.data);
+            chatContent = event.data;
+        };*/
+
+        //连接关闭的回调方法
+        websocket.onclose = function(){
+            console.log("close");
+        };
+
+        //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+        window.onbeforeunload = function(){
+            websocket.close();
+        };
+    }
+}
 function layim(basePath, userInfo){
+var websocket = null;
+
+//判断当前浏览器是否支持WebSocket
+if('WebSocket' in window){
+    var uid = userInfo.userid;
+    var websocket = new WebSocket("ws://192.168.196.142:8080/LRSXT/wsServlet/"+uid);
+    startListener(websocket);
+}
+else{
+    alert('Not support websocket')
+}
 var config = {
     msgurl: '私信地址',
     chatlogurl: '聊天记录url前缀',
@@ -22,6 +63,7 @@ var config = {
         sendurl: '' //发送消息接口
     },
     user: { //当前用户信息
+        id: userInfo.userid,
         name: userInfo.username,
         face: basePath+'/bin/upload/'+userInfo.grzp
     },
@@ -61,6 +103,9 @@ var config = {
     }
 }, dom = [$(window), $(document), $('html'), $('body')], xxim = {};
 
+websocket.onmessage = function(event){
+    xxim.getMessage(event);
+}
 //主界面tab
 xxim.tabs = function(index){
     var node = xxim.node;
@@ -378,7 +423,58 @@ xxim.getGroups = function(param){
         groupss.html('<li class="layim_errors">请求异常</li>');
     });
 };
+//消息接收
+xxim.getMessage = function(event){
+    var node = xxim.node, log = {};
+    var keys = xxim.nowchat.type + xxim.nowchat.id;
+    var obj=eval("("+event.data+")");
+    var content = obj.content;
+    var userid = obj.userid;
+    var time = obj.time;
+    var username = obj.username;
+    var userface = obj.userface;
+    //聊天模版
+    log.html = function(param, type){
+        return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
+            +'<div class="layim_chatuser">'
+                + function(){
+                    if(type === 'me'){
+                        return '<span class="layim_chattime">'+ param.time +'</span>'
+                               +'<span class="layim_chatname">'+ param.name +'</span>'
+                               +'<img src="'+ param.face +'" >';
+                    } else {
+                        return '<img src="'+ param.face +'" >'
+                               +'<span class="layim_chatname">'+ param.name +'</span>'
+                               +'<span class="layim_chattime">'+ param.time +'</span>';
+                    }
+                }()
+            +'</div>'
+            +'<div class="layim_chatsay">'+ param.content +'<em class="layim_zero"></em></div>'
+        +'</li>';
+    };
 
+    log.imarea = xxim.chatbox.find('#layim_area'+ keys);
+    if (config.user.id == userid) {
+        log.imarea.append(log.html({
+            time: time,
+            name: username,
+            face: userface,
+            //content: data.content
+            content: content
+        }, 'me'));
+    } else {
+        log.imarea.append(log.html({
+            time: time,
+            name: username,
+            face: userface,
+            //content: data.content
+            content: content
+        }));
+    }
+
+    node.imwrite.val('').focus();
+    log.imarea.scrollTop(log.imarea[0].scrollHeight);
+};
 //消息传输
 xxim.transmit = function(){
     var node = xxim.node, log = {};
@@ -389,8 +485,11 @@ xxim.transmit = function(){
     log.send = function(){
         var data = {
             content: node.imwrite.val(),
-            id: xxim.nowchat.id,
-            sign_key: '', //密匙
+            toid: xxim.nowchat.id,
+            mine:true,
+            userid: config.user.id,
+            username: config.user.name,
+            userface: config.user.face,
             _: +new Date
         };
 
@@ -398,49 +497,67 @@ xxim.transmit = function(){
             layer.tips('说点啥呗！', '#layim_write', 2);
             node.imwrite.focus();
         } else {
+            websocket.send(JSON.stringify(data));
             //此处皆为模拟
             var keys = xxim.nowchat.type + xxim.nowchat.id;
+            /*websocket.onmessage = function(event){
+                var obj=eval("("+event.data+")");
+                var content = obj.content;
+                var userid = obj.userid;
+                var time = obj.time;
+                var username = obj.username;
+                var userface = obj.userface;
+                //聊天模版
+                log.html = function(param, type){
+                    return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
+                        +'<div class="layim_chatuser">'
+                            + function(){
+                                if(type === 'me'){
+                                    return '<span class="layim_chattime">'+ param.time +'</span>'
+                                           +'<span class="layim_chatname">'+ param.name +'</span>'
+                                           +'<img src="'+ param.face +'" >';
+                                } else {
+                                    return '<img src="'+ param.face +'" >'
+                                           +'<span class="layim_chatname">'+ param.name +'</span>'
+                                           +'<span class="layim_chattime">'+ param.time +'</span>';
+                                }
+                            }()
+                        +'</div>'
+                        +'<div class="layim_chatsay">'+ param.content +'<em class="layim_zero"></em></div>'
+                    +'</li>';
+                };
 
-            //聊天模版
-            log.html = function(param, type){
-                return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
-                    +'<div class="layim_chatuser">'
-                        + function(){
-                            if(type === 'me'){
-                                return '<span class="layim_chattime">'+ param.time +'</span>'
-                                       +'<span class="layim_chatname">'+ param.name +'</span>'
-                                       +'<img src="'+ param.face +'" >';
-                            } else {
-                                return '<img src="'+ param.face +'" >'
-                                       +'<span class="layim_chatname">'+ param.name +'</span>'
-                                       +'<span class="layim_chattime">'+ param.time +'</span>';
-                            }
-                        }()
-                    +'</div>'
-                    +'<div class="layim_chatsay">'+ param.content +'<em class="layim_zero"></em></div>'
-                +'</li>';
-            };
+                log.imarea = xxim.chatbox.find('#layim_area'+ keys);
+                if (config.user.id == userid) {
+                    log.imarea.append(log.html({
+                        time: time,
+                        name: username,
+                        face: userface,
+                        //content: data.content
+                        content: content
+                    }, 'me'));
+                } else {
+                    log.imarea.append(log.html({
+                        time: time,
+                        name: username,
+                        face: userface,
+                        //content: data.content
+                        content: content
+                    }));
+                }
 
-            log.imarea = xxim.chatbox.find('#layim_area'+ keys);
-
-            log.imarea.append(log.html({
-                time: getChatTime(),
-                name: config.user.name,
-                face: config.user.face,
-                content: data.content
-            }, 'me'));
-            node.imwrite.val('').focus();
-            log.imarea.scrollTop(log.imarea[0].scrollHeight);
-
-            setTimeout(function(){
-                log.imarea.append(log.html({
-                    time: getChatTime(),
-                    name: xxim.nowchat.name,
-                    face: xxim.nowchat.face,
-                    content: config.autoReplay[(Math.random()*config.autoReplay.length) | 0]
-                }));
+                node.imwrite.val('').focus();
                 log.imarea.scrollTop(log.imarea[0].scrollHeight);
-            }, 500);
+            };*/
+//            setTimeout(function(){
+//                log.imarea.append(log.html({
+//                    time: getChatTime(),
+//                    name: xxim.nowchat.name,
+//                    face: xxim.nowchat.face,
+//                    content: config.autoReplay[(Math.random()*config.autoReplay.length) | 0]
+//                }));
+//                log.imarea.scrollTop(log.imarea[0].scrollHeight);
+//            }, 500);
 
             /*
             that.json(config.api.sendurl, data, function(datas){

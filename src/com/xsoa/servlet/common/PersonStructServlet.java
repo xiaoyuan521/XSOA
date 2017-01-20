@@ -58,7 +58,7 @@ public class PersonStructServlet extends BaseServlet {
 		} else if (CMD.equals(CMD_ZW)) {
 			// 加载员工
 			loadPerson(inputdata);
-		} 
+		}
 
 	}
 
@@ -69,10 +69,10 @@ public class PersonStructServlet extends BaseServlet {
 		}catch(Exception e){
 			MyLogger.error(this.getClass().getName(), e);
 		}finally{
-			this.print(result);	
+			this.print(result);
 		}
 	}
-	
+
 	public void loadJS(Map<String, String[]> inputdata) throws Exception {
 		ArrayList<Object> result = null;
 		try{
@@ -81,10 +81,10 @@ public class PersonStructServlet extends BaseServlet {
 		}catch(Exception e){
 			MyLogger.error(this.getClass().getName(), e);
 		}finally{
-			this.print(result);	
+			this.print(result);
 		}
 	}
-	
+
 	public void loadZW(Map<String, String[]> inputdata) throws Exception {
 
 		ArrayList<Object> result = null;
@@ -95,10 +95,10 @@ public class PersonStructServlet extends BaseServlet {
 		}catch(Exception e){
 			MyLogger.error(this.getClass().getName(), e);
 		}finally{
-			this.print(result);	
+			this.print(result);
 		}
 	}
-	
+
 	public void loadPerson(Map<String, String[]> inputdata) throws Exception {
 
 		ArrayList<Object> result = null;
@@ -108,7 +108,7 @@ public class PersonStructServlet extends BaseServlet {
 		}catch(Exception e){
 			MyLogger.error(this.getClass().getName(), e);
 		}finally{
-			this.print(result);	
+			this.print(result);
 		}
 	}
 

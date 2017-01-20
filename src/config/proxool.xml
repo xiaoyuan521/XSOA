@@ -4,11 +4,11 @@
 	<!-- 业务操作用数据库 -->
 	<proxool>
 		<alias>DBURL</alias>
-		<driver-url>jdbc:mysql://192.168.196.175:3306/lrsxt2016_backup?useUnicode=true&amp;characterEncoding=UTF-8</driver-url>
+		<driver-url>jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&amp;characterEncoding=UTF-8</driver-url>
 		<driver-class>com.mysql.jdbc.Driver</driver-class>
 		<driver-properties>
-			<property name="user" value="Terry" />
-			<property name="password" value="254213" />
+			<property name="user" value="root" />
+			<property name="password" value="123456" />
 		</driver-properties>
 		<maximum-active-time>300000</maximum-active-time>
 		<minimum-connection-count>1</minimum-connection-count>

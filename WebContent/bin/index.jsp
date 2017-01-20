@@ -35,7 +35,7 @@ $(document).ready(function(){
     //placeHolder(username,true);
     //placeHolder(password,true);
 	$("#username").focus();
-	refreshDateTime();
+	//refreshDateTime();
 
 	$("#username").on("blur",function() {
 		if($("#username").val()==""){

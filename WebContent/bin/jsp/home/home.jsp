@@ -152,6 +152,7 @@ function loadMenu() {
 
 loadMenu();
 var yhInfo ={
+    userid : "<%=user.getYHXX_YHID() %>",
 	username : "<%=user.getYHXX_YHMC() %>",
     grzp : "<%=user.getYHXX_GRZP() %>"
 }

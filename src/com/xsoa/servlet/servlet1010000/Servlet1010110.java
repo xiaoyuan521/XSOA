@@ -18,7 +18,7 @@ import com.xsoa.pojo.custom.pojo_1010000.Pojo1010110;
 import com.xsoa.service.service1010000.Service1010110;
 
 /**
- * 
+ *
  * @ClassName: Servlet1010110
  * @Package:com.xsoa.servlet.servlet1010000
  * @Description: 员工信息控制类
@@ -38,16 +38,16 @@ public class Servlet1010110 extends BaseServlet {
 	public static final String CMD_INSERT = "CMD_INSERT";
 	public static final String CMD_UPDATE = "CMD_UPDATE";
 	public static final String CMD_DELETE = "CMD_DELETE";
-	
+
 	/* 本Servlet对应的Service */
 	private Service1010110 service;
-	
+
 	/* Ajax返回前台的结果集 */
 	private ArrayList<Object> arrResult;
-	
+
 	/* 当前登录系统的用户对象 */
 	Pojo_YHXX beanUser;
-	
+
     public Servlet1010110() {
         super();
     }
@@ -59,9 +59,9 @@ public class Servlet1010110 extends BaseServlet {
 		service = new Service1010110();
 		arrResult = new ArrayList<Object>();
 		beanUser = (Pojo_YHXX)getSessionObject(SessionAttribute.LOGIN_USER);
-		
+
 		String CMD = this.getString(inputdata, "CMD");
-		
+
 		if (CMD_SELECT.equals(CMD)) {
 			getYgInfoList(inputdata);
 		} else if (CMD_CHK_EXIST.equals(CMD)) {
@@ -72,10 +72,10 @@ public class Servlet1010110 extends BaseServlet {
 			updateYgInfo(inputdata);
 		} else if (CMD_DELETE.equals(CMD)) {
 			deleteYgInfo(inputdata);
-		}		
+		}
 	}
 	/**
-	 * 
+	 *
 	 * @FunctionName: getYgInfoList
 	 * @Description: 获取员工信息数据个数及列表
 	 * @param inputdata
@@ -94,7 +94,7 @@ public class Servlet1010110 extends BaseServlet {
 
 		int TotalCount = 0;
 		List<Pojo1010110> roleDataList = new ArrayList<Pojo1010110>();
-		
+
 		try {
 			TotalCount = service.getYgInfoCount(beanIn);
 			roleDataList = service.getYgInfoList(beanIn, page, limit, sort);
@@ -106,7 +106,7 @@ public class Servlet1010110 extends BaseServlet {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @FunctionName: chkYgInfoExist
 	 * @Description: 判断员工信息是否已存在
 	 * @param inputdata
@@ -146,7 +146,7 @@ public class Servlet1010110 extends BaseServlet {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @FunctionName: insertYgInfo
 	 * @Description: 新增员工信息
 	 * @param inputdata
@@ -159,7 +159,7 @@ public class Servlet1010110 extends BaseServlet {
 		Pojo1010110 beanIn = (Pojo1010110) this.getObject(inputdata, "BeanIn",Pojo1010110.class);
 		beanIn.setYGXX_CJR(beanUser.getYHXX_YHID());
 		boolean result = false;
-		
+
 		try {
 			result = service.insertYgInfo(beanIn);
 			if (result) {
@@ -176,7 +176,7 @@ public class Servlet1010110 extends BaseServlet {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @FunctionName: updateYgInfo
 	 * @Description: 修改员工信息
 	 * @param inputdata
@@ -189,7 +189,7 @@ public class Servlet1010110 extends BaseServlet {
 		Pojo1010110 beanIn = (Pojo1010110) this.getObject(inputdata, "BeanIn",Pojo1010110.class);
 		beanIn.setYGXX_GXR(beanUser.getYHXX_YHID());
 		boolean result = false;
-		
+
 		try {
 			result = service.updateYgInfo(beanIn);
 			if (result) {
@@ -206,7 +206,7 @@ public class Servlet1010110 extends BaseServlet {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @FunctionName: deleteYgInfo
 	 * @Description: 删除员工信息
 	 * @param inputdata
@@ -219,7 +219,7 @@ public class Servlet1010110 extends BaseServlet {
 		Pojo1010110 beanIn = (Pojo1010110) this.getObject(inputdata, "BeanIn",Pojo1010110.class);
 		beanIn.setYGXX_GXR(beanUser.getYHXX_YHID());
 		boolean result = false;
-		
+
 		try {
 			result = service.deleteYgInfo(beanIn);
 			if (result) {
