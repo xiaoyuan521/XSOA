@@ -9,7 +9,10 @@
 
 //;!function(win, undefined){
 var chatContent;
-function startListener(websocket){
+var messageCount = 0;
+var messageList = [];
+var onlineList = [];
+function startListener(websocket, userInfo){
     if (websocket) {
       //连接发生错误的回调方法
         websocket.onerror = function(){
@@ -19,6 +22,7 @@ function startListener(websocket){
         //连接成功建立的回调方法
         websocket.onopen = function(event){
             console.log("open");
+            onlineList.push(userInfo.userid);
         };
 
         //接收到消息的回调方法
@@ -30,6 +34,7 @@ function startListener(websocket){
         //连接关闭的回调方法
         websocket.onclose = function(){
             console.log("close");
+            onlineList.remove(userInfo.userid);
         };
 
         //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
@@ -45,7 +50,7 @@ var websocket = null;
 if('WebSocket' in window){
     var uid = userInfo.userid;
     var websocket = new WebSocket("ws://192.168.196.142:8080/LRSXT/wsServlet/"+uid);
-    startListener(websocket);
+    startListener(websocket, userInfo);
 }
 else{
     alert('Not support websocket')
@@ -70,15 +75,15 @@ var config = {
 
     //自动回复内置文案，也可动态读取数据库配置
     autoReplay: [
-        '好气啊！！！',
-        '你没发错吧？',
-        '洗澡中，请勿打扰，偷窥请购票，个体四十，团体八折，订票电话：一般人我不告诉他！',
-        '你好，我是主人的美女秘书，有什么事就跟我说吧，等他回来我会转告他的。',
-        '我正在拉磨，没法招呼您，因为我们家毛驴去动物保护协会把我告了，说我剥夺它休产假的权利。',
-        '<（@￣︶￣@）>',
-        '你要和我说话？你真的要和我说话？你确定自己想说吗？你一定非说不可吗？那你说吧，这是自动回复。',
-        '主人正在开机自检，键盘鼠标看好机会出去凉快去了，我是他的电冰箱，我打字比较慢，你慢慢说，别急……',
-        '天黑请闭眼！'
+        '离线中~~ 天黑请闭眼！',
+        '离线中~~ 狼人请杀人！',
+        '离线中~~ 预言家请验人！',
+        '离线中~~ 女巫是否救人？',
+        '离线中~~ 女巫是否毒人？',
+        '离线中~~ 猎人是否开枪？',
+        '离线中~~ 狼人自爆了！',
+        '离线中~~ 好人胜利！',
+        '离线中~~ 狼人胜利！'
     ],
 
 
@@ -434,7 +439,6 @@ xxim.getMessage = function(event){
     var time = obj.time;
     var username = obj.username;
     var userface = obj.userface;
-    var keys = usertype + userid;
     //聊天模版
     log.html = function(param, type){
         return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
@@ -455,27 +459,40 @@ xxim.getMessage = function(event){
         +'</li>';
     };
 
-    log.imarea = xxim.chatbox.find('#layim_area'+ keys);
-    if (config.user.id == userid) {
-        log.imarea.append(log.html({
-            time: time,
-            name: username,
-            face: userface,
-            //content: data.content
-            content: content
-        }, 'me'));
-    } else {
-        log.imarea.append(log.html({
-            time: time,
-            name: username,
-            face: userface,
-            //content: data.content
-            content: content
-        }));
-    }
+    if (xxim.chatbox == null) {
+        if (messageList.indexOf(userid) == -1) {
+            messageList.push(userid);
+        }
+        messageCount = messageCount + 1;
+        document.getElementById("noMessage").innerHTML = messageCount.toString();
+        document.getElementById("noMessage").style.display="block";
+    } else if (xxim.chatbox.find('#layim_area'+ usertype + userid).length == 0) {
 
-    node.imwrite.val('').focus();
-    log.imarea.scrollTop(log.imarea[0].scrollHeight);
+    } else {
+        var keys = usertype + xxim.nowchat.id
+        document.getElementById("noMessage").style.display="none";
+        log.imarea = xxim.chatbox.find('#layim_area'+ keys);
+        if (config.user.id == userid) {
+            log.imarea.append(log.html({
+                time: time,
+                name: username,
+                face: userface,
+                //content: data.content
+                content: content
+            }, 'me'));
+        } else {
+            log.imarea.append(log.html({
+                time: time,
+                name: username,
+                face: userface,
+                //content: data.content
+                content: content
+            }));
+        }
+
+        node.imwrite.val('').focus();
+        log.imarea.scrollTop(log.imarea[0].scrollHeight);
+    }
 };
 //消息传输
 xxim.transmit = function(){
@@ -531,6 +548,17 @@ xxim.transmit = function(){
                 }, 'me'));
                 node.imwrite.val('').focus();
                 log.imarea.scrollTop(log.imarea[0].scrollHeight);
+                if (onlineList.indexOf(xxim.nowchat.id) == -1) {
+                    setTimeout(function(){
+                      log.imarea.append(log.html({
+                          time: getChatTime(),
+                          name: xxim.nowchat.name,
+                          face: xxim.nowchat.face,
+                          content: config.autoReplay[(Math.random()*config.autoReplay.length) | 0]
+                      }));
+                      log.imarea.scrollTop(log.imarea[0].scrollHeight);
+                  }, 500);
+                }
             }
             /*websocket.onmessage = function(event){
                 var obj=eval("("+event.data+")");
@@ -708,7 +736,7 @@ xxim.getDates = function(index){
                             +'<ul class="xxim_chatlist">';
                         item = datas.data[i].item;
                         for(var j = 0; j < item.length; j++){
-                            str += '<li data-id="'+ item[j].id +'" class="xxim_childnode" type="'+ (index === 0 ? 'one' : 'group') +'"><img src="'+ item[j].face +'" class="xxim_oneface"><span class="xxim_onename">'+ item[j].name +'</span></li>';
+                            str += '<li data-id="'+ item[j].id +'" class="xxim_childnode" type="'+ (index === 0 ? 'one' : 'group') +'"><img src="'+ item[j].face +'" class="xxim_oneface"><span class="xxim_onename">'+ item[j].name +'<i class="imessage"></i></span></li>';
                         }
                         str += '</ul></li>';
                     }
@@ -753,7 +781,8 @@ xxim.view = (function(){
                     +'<span class="xxim_setoffline"><i></i>隐身</span>'
                 +'</div>'
             +'</li>'
-            +'<li class="xxim_mymsg" id="xxim_mymsg" title="我的私信"><i></i><a href="'+ config.msgurl +'" target="_blank"></a></li>'
+            //+'<li class="layui-icon layim-tool-msgbox" layim-event="msgbox" title="消息盒子"><span class="layui-anim layui-anim-loop layer-anim-05">5</span></li>'
+            +'<li class="xxim_mymsg" id="xxim_mymsg" title="我的私信"><i></i><span id="noMessage" class="layui-anim layui-anim-loop layer-anim-05"></span></li>'
             +'<li class="xxim_seter" id="xxim_seter" title="设置">'
                 +'<i></i>'
                 +'<div class="">'
@@ -788,6 +817,45 @@ function getChatTime() {
 
     var curentDateTime    = year +"-"+mon+"-"+date+" "+hour+":"+min+":"+sec;
     return curentDateTime;
+}
+function addMessageRecord(from, to, content, time, type){
+    $.ajax({
+        async     : false,
+        type      : "post",
+        dataType  : "json",
+        url: getRootPath()+"/MessageRecord",
+        data: {
+            CMD : "SAVE_MESSAGE",
+            MESSAGE_FROM : from,
+            MESSAGE_TO : to,
+            MESSAGE_CONTENT : content,
+            MESSAGE_TIME : time,
+            MESSAGE_TYPE : type
+        },
+        complete : function(response) {},
+        success : function(response) {
+            var strResault = response[0];
+            if (strResault == "SUCCESS") {
+
+            } else if (strResault == "ERROR") {
+
+            }
+        }
+    });
+}
+function getRootPath(){
+    var result = "";
+    var curWwwPath=window.document.location.href;
+    var pathName=window.document.location.pathname;
+    var pos=curWwwPath.indexOf(pathName);
+    var localhostPath=curWwwPath.substring(0,pos);
+    var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+    if(projectName == "/LRSXT"){
+        result = localhostPath + projectName;
+    }else{
+        result = localhostPath + "/LRSXT";
+    }
+    return(result);
 }
 //(window);
 

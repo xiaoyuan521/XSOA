@@ -20,12 +20,15 @@ import javax.websocket.server.ServerEndpoint;
 import net.sf.json.JSONObject;
 
 import com.xsoa.pojo.basetable.Pojo_YHXX;
+import com.xsoa.pojo.common.Pojo_MESSAGE;
+import com.xsoa.service.common.MessageService;
 import com.xsoa.service.login.ServiceLogin;
 
 //该注解用来指定一个URI，客户端可以通过这个URI来连接到WebSocket。类似Servlet的注解mapping。无需在web.xml中配置。
 @ServerEndpoint("/wsServlet/{uid}")
 public class MyWebSocket{
     public ServiceLogin service = new ServiceLogin();
+    public MessageService service_m = new MessageService();
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
 
@@ -46,7 +49,7 @@ public class MyWebSocket{
     public void onOpen(Session session, @PathParam("uid") int uid){
         this.session = session;
         map.put(uid+"",session);
-        //webSocketSet.add(this);     //加入set中
+        webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
         try {
             List<Pojo_YHXX> list = service.getDataList();
@@ -82,27 +85,26 @@ public class MyWebSocket{
      * 收到客户端消息后调用的方法
      * @param message 客户端发送过来的消息
      * @param session 可选的参数
+     * @throws Exception
      */
     @OnMessage
-    public void onMessage(String message, Session session) {
-        int count = 0;
-        for(String key : map.keySet()){
-            count = count + 1;
-        }
+    public void onMessage(String message, Session session) throws Exception {
         JSONObject jsonObject=JSONObject.fromObject(message);
-        //String content = jsonObject.getString("content");
-        //System.out.println("来自客户端的消息:" + content);
         String id = jsonObject.getString("toid");
+        String userid = jsonObject.getString("userid");
+        String content = jsonObject.getString("content");
         SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         Date date = new Date();
         String time=df.format(date);
         JSONObject toMessage=new JSONObject();
-        toMessage.put("userid", jsonObject.getString("userid"));
-        toMessage.put("content", jsonObject.getString("content"));
+        toMessage.put("userid", userid);
+        toMessage.put("content", content);
         toMessage.put("time",time);
         toMessage.put("username",jsonObject.getString("username"));
         toMessage.put("userface",jsonObject.getString("userface"));
         toMessage.put("type", jsonObject.getString("type"));
+        toMessage.put("toid", id);
+        Pojo_MESSAGE po = new Pojo_MESSAGE();
 
         switch (id) {
             case "101"://狼群
@@ -152,8 +154,14 @@ public class MyWebSocket{
                        //llClient.saveFriendMessage(jsonObject);
                        //System.out.println("单聊-来自客户端的消息:" + content);
                     }else{                                      //如果不在线 就记录到数据库，下次对方上线时推送给对方。
+                        po.setMESSAGE_FROM(userid);
+                        po.setMESSAGE_TO(id);
+                        po.setMESSAGE_CONTENT(content);
+                        po.setMESSAGE_TIME(time);
+                        po.setMESSAGE_TYPE("OFF_LINE");
                         //jsonObject.put("mStatus",0);
                         //llClient.saveFriendMessage(jsonObject);
+                        service_m.saveMessage(po);
                         //System.out.println("单聊-对方不在线，消息已存数据库:" + toMessage.toString());
                     }
               }catch(IOException e) {
