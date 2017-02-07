@@ -25,10 +25,14 @@
 <link rel="stylesheet" href="<%=basePath%>/bin/css/menu.css" type="text/css">
 
 <link href="<%=basePath%>/bin/css/layim.css" type="text/css" rel="stylesheet"/>
+<link href="<%=basePath%>/bin/zui/css/zui.css" type="text/css" rel="stylesheet"/>
 <script type="text/javascript" src="<%=basePath%>/bin/js/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="<%=basePath%>/bin/js/menu.js"></script>
 <script type="text/javascript" src="<%=basePath%>/bin/plugin/layer/layer.min.js"></script>
+
+
 <script type="text/javascript">
+var basePath="<%=basePath%>";
 window.onload=function(){
 	var w = window.screen.width;
 	var h = window.screen.height;
@@ -108,6 +112,9 @@ function logout(){
 <script src="../../lay/layer/layer.min.js"></script>
 <script src="../../lay/layim.js"></script>
 <script src="../../lay/json2.js"></script>
+<script src="../../zui/js/zui.js"></script>
+
+
 <div id="header" class="navbar">
 	<div class="navbar-inner">
         <div class="site">

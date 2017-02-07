@@ -38,6 +38,9 @@ public class Pojo_YHXX implements Serializable {
 	/** The value of the simple 锁定状态(0--正常 1--冻结) property. */
 	private String YHXX_SDZT;
 
+	/** The value of the simple 是否在线(0--在线 1--离线) property. */
+    private String YHXX_ZXZT;
+
 	/** The value of the simple 创建人 property. */
 	private String YHXX_CJR;
 
@@ -142,6 +145,14 @@ public class Pojo_YHXX implements Serializable {
 
     public void setYHXX_SDZT(String yHXX_SDZT) {
         YHXX_SDZT = yHXX_SDZT;
+    }
+
+    public String getYHXX_ZXZT() {
+        return YHXX_ZXZT;
+    }
+
+    public void setYHXX_ZXZT(String yHXX_ZXZT) {
+        YHXX_ZXZT = yHXX_ZXZT;
     }
 
     public String getYHXX_CJR() {

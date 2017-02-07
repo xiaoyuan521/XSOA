@@ -16,10 +16,19 @@ public class Pojo_MESSAGE implements Serializable {
     private String MESSAGE_TIME;
 
     /** The value of the simple 消息内容 property. */
-    private String MESSAGE_CONTENT;
+    private byte[] MESSAGE_CONTENT;
+
+    /** The value of the simple 消息内容 property. */
+    private String CONTENT;
 
     /** The value of the simple 消息类型 property. */
     private String MESSAGE_TYPE;
+
+    /** The value of the simple 头像 property. */
+    private String FACE;
+
+    /** The value of the simple 名字 property. */
+    private String NAME;
 
     public String getMESSAGE_FROM() {
         return MESSAGE_FROM;
@@ -45,12 +54,20 @@ public class Pojo_MESSAGE implements Serializable {
         MESSAGE_TIME = mESSAGE_TIME;
     }
 
-    public String getMESSAGE_CONTENT() {
+    public byte[] getMESSAGE_CONTENT() {
         return MESSAGE_CONTENT;
     }
 
-    public void setMESSAGE_CONTENT(String mESSAGE_CONTENT) {
+    public void setMESSAGE_CONTENT(byte[] mESSAGE_CONTENT) {
         MESSAGE_CONTENT = mESSAGE_CONTENT;
+    }
+
+    public String getCONTENT() {
+        return CONTENT;
+    }
+
+    public void setCONTENT(String cONTENT) {
+        CONTENT = cONTENT;
     }
 
     public String getMESSAGE_TYPE() {
@@ -59,6 +76,22 @@ public class Pojo_MESSAGE implements Serializable {
 
     public void setMESSAGE_TYPE(String mESSAGE_TYPE) {
         MESSAGE_TYPE = mESSAGE_TYPE;
+    }
+
+    public String getFACE() {
+        return FACE;
+    }
+
+    public void setFACE(String fACE) {
+        FACE = fACE;
+    }
+
+    public String getNAME() {
+        return NAME;
+    }
+
+    public void setNAME(String nAME) {
+        NAME = nAME;
     }
 
 }

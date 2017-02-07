@@ -11,7 +11,6 @@
 var chatContent;
 var messageCount = 0;
 var messageList = [];
-var onlineList = [];
 function startListener(websocket, userInfo){
     if (websocket) {
       //连接发生错误的回调方法
@@ -22,7 +21,6 @@ function startListener(websocket, userInfo){
         //连接成功建立的回调方法
         websocket.onopen = function(event){
             console.log("open");
-            onlineList.push(userInfo.userid);
         };
 
         //接收到消息的回调方法
@@ -34,7 +32,6 @@ function startListener(websocket, userInfo){
         //连接关闭的回调方法
         websocket.onclose = function(){
             console.log("close");
-            onlineList.remove(userInfo.userid);
         };
 
         //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
@@ -45,7 +42,6 @@ function startListener(websocket, userInfo){
 }
 function layim(basePath, userInfo){
 var websocket = null;
-
 //判断当前浏览器是否支持WebSocket
 if('WebSocket' in window){
     var uid = userInfo.userid;
@@ -400,6 +396,67 @@ xxim.popchatbox = function(othis){
         node.layimMin.hide();
         chatbox.parents('.xubox_layer').show();
     }
+
+    var list = getChatRecords(userInfo.userid ,dataId, param.type);
+    var log = {};
+    $.each(list, function(index, item) {
+        log.html = function(param, type){
+            return '<li class="'+ (type === 'me' ? 'layim_chateme' : '') +'">'
+                +'<div class="layim_chatuser">'
+                    + function(){
+                        if(type === 'me'){
+                            return '<span class="layim_chattime">'+ param.time +'</span>'
+                                   +'<span class="layim_chatname">'+ param.name +'</span>'
+                                   +'<img src="'+ param.face +'" >';
+                        } else {
+                            return '<img src="'+ param.face +'" >'
+                                   +'<span class="layim_chatname">'+ param.name +'</span>'
+                                   +'<span class="layim_chattime">'+ param.time +'</span>';
+                        }
+                    }()
+                +'</div>'
+                +'<div class="layim_chatsay">'+ param.content +'<em class="layim_zero"></em></div>'
+            +'</li>';
+        };
+        log.imarea = xxim.chatbox.find('#layim_area'+ key);
+        if (param.type=="one") {
+            if (item.MESSAGE_FROM == config.user.id) {
+                log.imarea.append(log.html({
+                    time: item.MESSAGE_TIME,
+                    name: config.user.name,
+                    face: config.user.face,
+                    content: item.CONTENT
+                }, 'me'));
+            } else {
+                log.imarea.append(log.html({
+                    time: item.MESSAGE_TIME,
+                    name: param.name,
+                    face: param.face,
+                    content: item.CONTENT
+                }));
+            }
+        } else if (param.type=="group") {
+            if (item.MESSAGE_FROM == config.user.id) {
+                log.imarea.append(log.html({
+                    time: item.MESSAGE_TIME,
+                    name: config.user.name,
+                    face: config.user.face,
+                    content: item.CONTENT
+                }, 'me'));
+            } else {
+                log.imarea.append(log.html({
+                    time: item.MESSAGE_TIME,
+                    name: item.NAME,
+                    face: basePath+'/bin/upload/'+item.FACE,
+                    content: item.CONTENT
+                }));
+            }
+        }
+
+
+        node.imwrite.val('').focus();
+        log.imarea.scrollTop(log.imarea[0].scrollHeight);
+    });
 };
 
 //请求群员
@@ -412,7 +469,7 @@ xxim.getGroups = function(param){
             var ii = 0, lens = datas.data.length;
             if(lens > 0){
                 for(; ii < lens; ii++){
-                    str += '<li data-id="'+ datas.data[ii].id +'" type="one"><img src="'+ datas.data[ii].face +'"><span class="xxim_onename">'+ datas.data[ii].name +'</span></li>';
+                    str += '<li id="'+ datas.data[ii].id +'" data-id="'+ datas.data[ii].id +'" type="one" class="off_line"><img src="'+ datas.data[ii].face +'"><span class="xxim_onename">'+ datas.data[ii].name +'</span></li>';
                 }
             } else {
                 str = '<li class="layim_errors">没有群员</li>';
@@ -423,6 +480,18 @@ xxim.getGroups = function(param){
         }
         groupss.removeClass('loading');
         groupss.html(str);
+        var list_on = getOnlineList();
+        for(var i = 0; i < list_on.length; i++ ){
+            //$("#"+list_on[i]+"").removeClass("off_line");
+            groupss.find("#"+list_on[i]).removeClass("off_line");
+            //$("#layim_group"+ keys +"li[id='"+list_on[i]+"']").removeClass("off_line");
+        }
+        var list_off = getOfflineList();
+        for(var i = 0; i < list_off.length; i++ ){
+            //$("#"+list_off[i]+"").addClass("off_line");
+            //$("#layim_group"+ keys +"li[id='"+list_off[i]+"']").addClass("off_line");
+            groupss.find("#"+list_off[i]).addClass("off_line");
+        }
     }, function(){
         groupss.removeClass('loading');
         groupss.html('<li class="layim_errors">请求异常</li>');
@@ -433,11 +502,37 @@ xxim.getMessage = function(event){
     var node = xxim.node, log = {};
     //var keys = xxim.nowchat.type + xxim.nowchat.id;
     var obj=eval("("+event.data+")");
-    var content = obj.content;
+    var flag = obj.flag;
     var userid = obj.userid;
+    var username = obj.username;
+    var onlineList = obj.onlineList;
+    var offlineList = obj.offlineList;
+    if (flag == "online") {
+        for(var i = 0; i < onlineList.length; i++ ){
+            $("#"+onlineList[i]+"").removeClass("off_line");
+        }
+        if (userInfo.userid != userid) {
+            new $.zui.Messager('用户：'+username+'上线了！', {
+                icon: 'bell',// 定义消息图标
+                placement: 'bottom', // 定义显示位置
+                close: false
+            }).show();
+        }
+        return;
+    } else if (flag == "offline") {
+        for(var i = 0; i < offlineList.length; i++ ){
+            $("#"+offlineList[i]+"").addClass("off_line");
+        }
+        new $.zui.Messager('用户：'+username+'下线了！', {
+            icon: 'bell',// 定义消息图标
+            placement: 'bottom', // 定义显示位置
+            close: false
+        }).show();
+        return;
+    }
+    var content = obj.content;
     var usertype = obj.type;
     var time = obj.time;
-    var username = obj.username;
     var userface = obj.userface;
     //聊天模版
     log.html = function(param, type){
@@ -466,8 +561,6 @@ xxim.getMessage = function(event){
         messageCount = messageCount + 1;
         document.getElementById("noMessage").innerHTML = messageCount.toString();
         document.getElementById("noMessage").style.display="block";
-    } else if (xxim.chatbox.find('#layim_area'+ usertype + userid).length == 0) {
-
     } else {
         var keys = usertype + xxim.nowchat.id
         document.getElementById("noMessage").style.display="none";
@@ -548,7 +641,7 @@ xxim.transmit = function(){
                 }, 'me'));
                 node.imwrite.val('').focus();
                 log.imarea.scrollTop(log.imarea[0].scrollHeight);
-                if (onlineList.indexOf(xxim.nowchat.id) == -1) {
+                if (getOnlineList().indexOf(xxim.nowchat.id) == -1) {
                     setTimeout(function(){
                       log.imarea.append(log.html({
                           time: getChatTime(),
@@ -736,7 +829,11 @@ xxim.getDates = function(index){
                             +'<ul class="xxim_chatlist">';
                         item = datas.data[i].item;
                         for(var j = 0; j < item.length; j++){
-                            str += '<li data-id="'+ item[j].id +'" class="xxim_childnode" type="'+ (index === 0 ? 'one' : 'group') +'"><img src="'+ item[j].face +'" class="xxim_oneface"><span class="xxim_onename">'+ item[j].name +'<i class="imessage"></i></span></li>';
+                            if(index != 1) {
+                                str += '<li id="'+ item[j].id +'" data-id="'+ item[j].id +'" class="xxim_childnode off_line" type="'+ (index === 0 ? 'one' : 'group') +'"><img src="'+ item[j].face +'" class="xxim_oneface"><span class="xxim_onename">'+ item[j].name +'<i class="imessage"></i></span></li>';
+                            } else {
+                                str += '<li data-id="'+ item[j].id +'" class="xxim_childnode" type="'+ (index === 0 ? 'one' : 'group') +'"><img src="'+ item[j].face +'" class="xxim_oneface"><span class="xxim_onename">'+ item[j].name +'<i class="imessage"></i></span></li>';
+                            }
                         }
                         str += '</ul></li>';
                     }
@@ -749,6 +846,7 @@ xxim.getDates = function(index){
                     str += '</ul></li>';
                 }
                 myf.html(str);
+
             } else {
                 myf.html('<li class="xxim_errormsg">没有任何数据</li>');
             }
@@ -856,6 +954,63 @@ function getRootPath(){
         result = localhostPath + "/LRSXT";
     }
     return(result);
+}
+//获取在线用户
+function getOnlineList(){
+    var list = [];
+    $.ajax({
+        async     : false,
+        type      : "post",
+        dataType  : "json",
+        url: getRootPath()+"/MessageRecord",
+        data: {
+            CMD    : "SELECT_ONLINE"
+        },
+        complete :function(response){},
+        success: function(response) {
+            list = response[0];
+        }
+    });
+    return list;
+}
+//获取离线用户
+function getOfflineList(){
+    var list = [];
+    $.ajax({
+        async     : false,
+        type      : "post",
+        dataType  : "json",
+        url: getRootPath()+"/MessageRecord",
+        data: {
+            CMD    : "SELECT_OFFLINE"
+        },
+        complete :function(response){},
+        success: function(response) {
+            list = response[0];
+        }
+    });
+    return list;
+}
+
+function getChatRecords(from_id, to_id, type){
+    var list = [];
+    $.ajax({
+        async     : false,
+        type      : "post",
+        dataType  : "json",
+        url: getRootPath()+"/MessageRecord",
+        data: {
+            CMD    : "SELECT_MESSAGE",
+            FROM   : from_id,
+            TO     : to_id,
+            TYPE   : type
+        },
+        complete :function(response){},
+        success: function(response) {
+            list = response[0];
+        }
+    });
+    return list;
 }
 //(window);
 

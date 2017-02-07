@@ -354,4 +354,31 @@ public class ServiceLogin {
       return strbuf.toString();
   }
 
+  public void updateUserOnline(String yhid, String flag) throws Exception {
+      int result = 0;
+      try {
+          db.openConnection();
+          db.beginTran();
+          StringBuffer strbuf = new StringBuffer();
+          strbuf.append(" UPDATE ");
+          strbuf.append("     YHXX ");
+          strbuf.append(" SET ");
+          strbuf.append("     YHXX_ZXZT='").append(flag).append("' ");//在线状态
+          strbuf.append(" WHERE ");
+          strbuf.append("     YHXX_YHID='").append(yhid).append("' ");//用户id
+          result = db.executeSQL(strbuf);
+          if (result > 0) {
+              db.commit();
+          } else {
+              db.rollback();
+          }
+      } catch (Exception e) {
+          db.rollback();
+          MyLogger.error(this.getClass().getName(), e);
+          throw e;
+      } finally {
+          db.closeConnection();
+      }
+  }
+
 }

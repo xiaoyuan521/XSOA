@@ -31,6 +31,7 @@ public class MyWebSocket{
     public MessageService service_m = new MessageService();
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
+    private static String username = "";
 
     //根据用户找session
     public static Map<String,Session> map=new HashMap<String,Session>();//根据用户找session
@@ -39,8 +40,10 @@ public class MyWebSocket{
 
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private Session session;
-
+    List <Pojo_YHXX> list = new ArrayList<Pojo_YHXX>();
     List <String> userList = new ArrayList<String>();
+    List <String> onlineList = new ArrayList<String>();
+    List <String> offlineList = new ArrayList<String>();
     /**
      * 连接建立成功调用的方法
      * @param session  可选的参数。session为与某个客户端的连接会话，需要通过它来给客户端发送数据
@@ -52,8 +55,16 @@ public class MyWebSocket{
         webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
         try {
-            List<Pojo_YHXX> list = service.getDataList();
+            service.updateUserOnline(String.valueOf(uid), "0");
+            List<Pojo_YHXX> dataList = service_m.getOnlineList();
+            for (Pojo_YHXX po : dataList) {
+                onlineList.add(po.getYHXX_YHID());
+            }
+            list = service.getDataList();
             for (Pojo_YHXX po : list) {
+                if (String.valueOf(uid).equals(po.getYHXX_YHID())) {
+                    username = po.getYHXX_YHMC();
+                }
                 userList.add(po.getYHXX_YHID());
             }
         } catch (Exception e) {
@@ -61,14 +72,30 @@ public class MyWebSocket{
             e.printStackTrace();
         }
         System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
+        JSONObject toMessage=new JSONObject();
+        toMessage.put("flag", "online");
+        toMessage.put("userid", String.valueOf(uid));
+        toMessage.put("username", username);
+        toMessage.put("onlineList", onlineList);
+        for (int i=0;i<userList.size();i++) {
+            //if(map.containsKey(userList.get(i)) && !userList.get(i).equals(String.valueOf(uid))) {
+            if(map.containsKey(userList.get(i))) {
+                session=(Session)map.get(userList.get(i));
+                try {
+                  session.getBasicRemote().sendText(toMessage.toString());
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
      * 连接关闭调用的方法
      */
     @OnClose
-    public void onClose(){
-        if(map.containsValue(session)){
+    public void onClose(@PathParam("uid") int uid){
+        if (map.containsValue(session)) {
             for (Entry<String, Session> entry : map.entrySet()){
                  if(entry.getValue().equals(session)){
                      map.remove(entry.getKey());
@@ -78,7 +105,36 @@ public class MyWebSocket{
         }
         //webSocketSet.remove(this);  //从set中删除
         subOnlineCount();           //在线数减1
+        try {
+            service.updateUserOnline(String.valueOf(uid), "1");
+            List<Pojo_YHXX>dataList = service_m.getOfflineList();
+            for (Pojo_YHXX po : dataList) {
+                offlineList.add(po.getYHXX_YHID());
+            }
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }//修改在线状态
+        for (Pojo_YHXX po : list) {
+            if (String.valueOf(uid).equals(po.getYHXX_YHID())) {
+                username = po.getYHXX_YHMC();
+            }
+        }
         System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
+        JSONObject toMessage=new JSONObject();
+        toMessage.put("flag", "offline");
+        toMessage.put("username", username);
+        toMessage.put("offlineList", offlineList);
+        for (int i=0;i<userList.size();i++) {
+            if(map.containsKey(userList.get(i)) && !userList.get(i).equals(String.valueOf(uid))) {
+                session=(Session)map.get(userList.get(i));
+                try {
+                  session.getBasicRemote().sendText(toMessage.toString());
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
@@ -108,6 +164,12 @@ public class MyWebSocket{
 
         switch (id) {
             case "101"://狼群
+                  po.setMESSAGE_FROM(userid);
+                  po.setMESSAGE_TO(id);
+                  po.setCONTENT(content);
+                  po.setMESSAGE_TIME(time);
+                  po.setMESSAGE_TYPE("GROUP");
+                  service_m.saveMessage(po);
                   for (int i=0;i<userList.size();i++) {
                       if(map.containsKey(userList.get(i))) {
                           session=(Session)map.get(userList.get(i));
@@ -146,18 +208,19 @@ public class MyWebSocket{
                 break;
             default://单聊
                 try {
+                    po.setMESSAGE_FROM(userid);
+                    po.setMESSAGE_TO(id);
+                    po.setCONTENT(content);
+                    po.setMESSAGE_TIME(time);
                     if(map.containsKey(id+"")){               //如果在线，及时推送
-
-                       map.get(id+"").getBasicRemote().sendText(toMessage.toString());               //发送消息给对方
-                       //map.get(id+"").getAsyncRemote().sendText(toMessage.toString());
-                       //jsonObject.put("mStatus", 1);            //消息状态0为未读，1为已读
-                       //llClient.saveFriendMessage(jsonObject);
-                       //System.out.println("单聊-来自客户端的消息:" + content);
+                        po.setMESSAGE_TYPE("ON_LINE");
+                        service_m.saveMessage(po);
+                        map.get(id+"").getBasicRemote().sendText(toMessage.toString());               //发送消息给对方
+                        //map.get(id+"").getAsyncRemote().sendText(toMessage.toString());
+                        //jsonObject.put("mStatus", 1);            //消息状态0为未读，1为已读
+                        //llClient.saveFriendMessage(jsonObject);
+                        //System.out.println("单聊-来自客户端的消息:" + content);
                     }else{                                      //如果不在线 就记录到数据库，下次对方上线时推送给对方。
-                        po.setMESSAGE_FROM(userid);
-                        po.setMESSAGE_TO(id);
-                        po.setMESSAGE_CONTENT(content);
-                        po.setMESSAGE_TIME(time);
                         po.setMESSAGE_TYPE("OFF_LINE");
                         //jsonObject.put("mStatus",0);
                         //llClient.saveFriendMessage(jsonObject);
