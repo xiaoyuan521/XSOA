@@ -10,7 +10,7 @@
 //;!function(win, undefined){
 var chatContent;
 var messageCount = 0;
-var messageList = [];
+var unMessageList = [];
 function startListener(websocket, userInfo){
     if (websocket) {
       //连接发生错误的回调方法
@@ -41,16 +41,7 @@ function startListener(websocket, userInfo){
     }
 }
 function layim(basePath, userInfo){
-var websocket = null;
-//判断当前浏览器是否支持WebSocket
-if('WebSocket' in window){
-    var uid = userInfo.userid;
-    var websocket = new WebSocket("ws://192.168.196.142:8080/LRSXT/wsServlet/"+uid);
-    startListener(websocket, userInfo);
-}
-else{
-    alert('Not support websocket')
-}
+
 var config = {
     msgurl: '私信地址',
     chatlogurl: '聊天记录url前缀',
@@ -104,9 +95,6 @@ var config = {
     }
 }, dom = [$(window), $(document), $('html'), $('body')], xxim = {};
 
-websocket.onmessage = function(event){
-    xxim.getMessage(event);
-}
 //主界面tab
 xxim.tabs = function(index){
     var node = xxim.node;
@@ -207,6 +195,8 @@ xxim.popchat = function(param){
         xxim.chatbox.find('.layim_close').on('click', function(){
             var indexs = layero.attr('times');
             layer.close(indexs);
+            //setChatRead(xxim.nowchat.id, config.user.id, xxim.nowchat.type);
+
             xxim.chatbox = null;
             config.chating = {};
             config.chatings = 0;
@@ -396,8 +386,15 @@ xxim.popchatbox = function(othis){
         node.layimMin.hide();
         chatbox.parents('.xubox_layer').show();
     }
-
     var list = getChatRecords(userInfo.userid ,dataId, param.type);
+
+    if (unMessageList.indexOf(dataId) != -1) {
+        messageCount = messageCount - 1;
+        arrayRemove(unMessageList, dataId);
+        showMessageCount(messageCount);
+    }
+
+
     var log = {};
     $.each(list, function(index, item) {
         log.html = function(param, type){
@@ -507,6 +504,8 @@ xxim.getMessage = function(event){
     var username = obj.username;
     var onlineList = obj.onlineList;
     var offlineList = obj.offlineList;
+    var unReadList = obj.unReadList;
+    var toid = obj.toid;
     if (flag == "online") {
         for(var i = 0; i < onlineList.length; i++ ){
             $("#"+onlineList[i]+"").removeClass("off_line");
@@ -517,6 +516,12 @@ xxim.getMessage = function(event){
                 placement: 'bottom', // 定义显示位置
                 close: false
             }).show();
+        } else {
+            $.each(unReadList, function(index, item) {
+                unMessageList.push(item.MESSAGE_FROM);
+            })
+            messageCount = unReadList.length;
+            showMessageCount(messageCount);
         }
         return;
     } else if (flag == "offline") {
@@ -555,12 +560,19 @@ xxim.getMessage = function(event){
     };
 
     if (xxim.chatbox == null) {
-        if (messageList.indexOf(userid) == -1) {
-            messageList.push(userid);
+        if ("one" == usertype) {
+            if (unMessageList.indexOf(userid) == -1) {
+                unMessageList.push(userid);
+                messageCount = messageCount + 1;
+            }
+            showMessageCount(messageCount);
         }
-        messageCount = messageCount + 1;
-        document.getElementById("noMessage").innerHTML = messageCount.toString();
-        document.getElementById("noMessage").style.display="block";
+    } else if (xxim.chatbox.find('#layim_area'+ usertype + userid).length == 0 && "one" == usertype) {
+        if (unMessageList.indexOf(userid) == -1) {
+            unMessageList.push(userid);
+            messageCount = messageCount + 1;
+        }
+        showMessageCount(messageCount);
     } else {
         var keys = usertype + xxim.nowchat.id
         document.getElementById("noMessage").style.display="none";
@@ -899,7 +911,19 @@ xxim.view = (function(){
     xxim.event();
     xxim.layinit();
 }());
-
+var websocket = null;
+//判断当前浏览器是否支持WebSocket
+if('WebSocket' in window){
+  var uid = userInfo.userid;
+  var websocket = new WebSocket("ws://192.168.196.142:8080/LRSXT/wsServlet/"+uid);
+  startListener(websocket, userInfo);
+}
+else{
+  alert('Not support websocket')
+}
+websocket.onmessage = function(event){
+    xxim.getMessage(event);
+}
 }
 function getChatTime() {
     var today = new Date();
@@ -916,28 +940,20 @@ function getChatTime() {
     var curentDateTime    = year +"-"+mon+"-"+date+" "+hour+":"+min+":"+sec;
     return curentDateTime;
 }
-function addMessageRecord(from, to, content, time, type){
+function setChatRead(from, to, type){
     $.ajax({
         async     : false,
         type      : "post",
         dataType  : "json",
         url: getRootPath()+"/MessageRecord",
         data: {
-            CMD : "SAVE_MESSAGE",
-            MESSAGE_FROM : from,
-            MESSAGE_TO : to,
-            MESSAGE_CONTENT : content,
-            MESSAGE_TIME : time,
-            MESSAGE_TYPE : type
+            CMD : "SET_MESSAGE_READ",
+            FROM : from,
+            TO : to,
+            TYPE : type
         },
         complete : function(response) {},
         success : function(response) {
-            var strResault = response[0];
-            if (strResault == "SUCCESS") {
-
-            } else if (strResault == "ERROR") {
-
-            }
         }
     });
 }
@@ -1011,6 +1027,24 @@ function getChatRecords(from_id, to_id, type){
         }
     });
     return list;
+}
+
+function showMessageCount(messageCount){
+    if (messageCount > 0) {
+        document.getElementById("noMessage").innerHTML = messageCount.toString();
+        document.getElementById("noMessage").style.display="block";
+    } else {
+        document.getElementById("noMessage").style.display="none";
+    }
+}
+
+function arrayRemove(arr, val) {
+    for (var i=0; i<arr.length; i++) {
+        if(arr[i] == val) {
+          arr.splice(i, 1);
+          break;
+        }
+    }
 }
 //(window);
 

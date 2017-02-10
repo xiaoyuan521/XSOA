@@ -52,7 +52,8 @@ public class MessageService {
             strbuf_IN.append("     MESSAGE_TO, ");//接收方
             strbuf_IN.append("     MESSAGE_CONTENT, ");//内容
             strbuf_IN.append("     MESSAGE_TIME, ");//时间
-            strbuf_IN.append("     MESSAGE_TYPE ");//类型
+            strbuf_IN.append("     MESSAGE_TYPE, ");//类型
+            strbuf_IN.append("     MESSAGE_READ ");//是否已读
             strbuf_IN.append(" ) ");
             strbuf_IN.append(" VALUES ");
             strbuf_IN.append(" ( ");
@@ -61,7 +62,8 @@ public class MessageService {
             strbuf_IN.append("     '"+beanIn.getMESSAGE_TO()+"', ");
             strbuf_IN.append("     '"+beanIn.getCONTENT()+"', ");
             strbuf_IN.append("     '"+beanIn.getMESSAGE_TIME()+"', ");
-            strbuf_IN.append("     '"+beanIn.getMESSAGE_TYPE()+"' ");
+            strbuf_IN.append("     '"+beanIn.getMESSAGE_TYPE()+"', ");
+            strbuf_IN.append("     '1' ");
             strbuf_IN.append(" ) ");
             count_in = db.executeSQL(strbuf_IN);
 
@@ -81,7 +83,7 @@ public class MessageService {
             strbuf_DEL.append(" AND ");
             strbuf_DEL.append("     m.MESSAGE_TO = '"+beanIn.getMESSAGE_FROM()+"') ");
             strbuf_DEL.append(" ORDER BY ");
-            strbuf_DEL.append(" m.MESSAGE_TIME DESC LIMIT 5,1) AS b) ");
+            strbuf_DEL.append(" m.MESSAGE_TIME DESC LIMIT 200,1) AS b) ");
             count_del = db.executeSQL(strbuf_DEL);
 
             StringBuffer strbuf_GROUP = new StringBuffer();
@@ -94,7 +96,7 @@ public class MessageService {
             strbuf_GROUP.append(" WHERE ");
             strbuf_GROUP.append("     m.MESSAGE_TO = '"+beanIn.getMESSAGE_TO()+"' ");
             strbuf_GROUP.append(" ORDER BY ");
-            strbuf_GROUP.append(" m.MESSAGE_TIME DESC LIMIT 10,1) AS b) ");
+            strbuf_GROUP.append(" m.MESSAGE_TIME DESC LIMIT 2000,1) AS b) ");
             db.executeSQL(strbuf_GROUP);
 
             if (count_in > 0) {
@@ -202,7 +204,8 @@ public class MessageService {
          strbuf.append("     M.MESSAGE_FROM, ");//发送方
          strbuf.append("     M.MESSAGE_TO, ");//接受方
          strbuf.append("     M.MESSAGE_CONTENT, ");//消息内容
-         strbuf.append("     M.MESSAGE_TIME ");//消息时间
+         strbuf.append("     M.MESSAGE_TIME, ");//消息时间
+         strbuf.append("     M.MESSAGE_READ ");//是否读取
          strbuf.append(" FROM ");
          strbuf.append("     MESSAGE M");
          if ("one".equals(type)) {
@@ -229,6 +232,94 @@ public class MessageService {
      }
      return dataList;
  }
+
+ /**
+ *
+ * @FunctionName: getUnReadList
+ * @Description: 获取未读消息
+ * @throws Exception
+ * @return List<Pojo_MESSAGE>
+ * @author czl
+ * @date 2017-02-08
+ */
+public List<Pojo_MESSAGE> getUnReadList(String userid) throws Exception {
+    List<Pojo_MESSAGE> dataList = null;
+
+    try {
+        db.openConnection();
+
+        StringBuffer strbuf = new StringBuffer();
+        strbuf.append(" SELECT ");
+        strbuf.append("     M.MESSAGE_FROM, ");//发送方
+        strbuf.append("     COUNT(M.MESSAGE_FROM) AS UNREAD_COUNT ");//未读数
+        strbuf.append(" FROM ");
+        strbuf.append("     MESSAGE M");
+        strbuf.append(" WHERE ");
+        strbuf.append("     M.MESSAGE_TO = '"+userid+"' ");
+        strbuf.append(" AND ");
+        strbuf.append("     M.MESSAGE_FROM != '"+userid+"' ");
+        strbuf.append(" AND ");
+        strbuf.append("     M.MESSAGE_READ = '1' ");
+        strbuf.append(" GROUP BY ");
+        strbuf.append("     M.MESSAGE_FROM ");
+        ResultSetHandler<List<Pojo_MESSAGE>> rs = new BeanListHandler<Pojo_MESSAGE>(Pojo_MESSAGE.class);
+        dataList = db.queryForBeanListHandler(strbuf, rs);
+    } catch (Exception e) {
+        MyLogger.error(this.getClass().getName(), e);
+        throw e;
+    } finally {
+        db.closeConnection();
+    }
+    return dataList;
+}
+
+    /**
+    *
+    * @FunctionName: setMessageRead
+    * @Description: 设置消息已读
+    * @throws Exception
+    * @author czl
+    * @date 2017-02-08
+    */
+    public void setMessageRead(String from, String to, String type) throws Exception {
+        int result = 0;
+        try {
+            db.openConnection();
+            db.beginTran();
+            StringBuffer strbuf = new StringBuffer();
+            if ("one".equals(type)) {
+                strbuf.append(" UPDATE ");
+                strbuf.append("     MESSAGE ");
+                strbuf.append(" SET ");
+                strbuf.append("     MESSAGE_READ='0' ");//设置已读
+                strbuf.append(" WHERE ");
+                strbuf.append("     MESSAGE_FROM='").append(to).append("' ");
+                strbuf.append(" AND ");
+                strbuf.append("     MESSAGE_TO='").append(from).append("' ");
+            } else if ("group".equals(type)) {
+                strbuf.append(" UPDATE ");
+                strbuf.append("     MESSAGE ");
+                strbuf.append(" SET ");
+                strbuf.append("     MESSAGE_READ=CONCAT(MESSAGE_READ, ',").append(from).append("')");
+                strbuf.append(" WHERE ");
+                strbuf.append("     MESSAGE_TO='").append(to).append("'");
+                strbuf.append(" AND ");
+                strbuf.append("     LOCATE('").append(from).append("',MESSAGE_READ)=0 ");
+            }
+            result = db.executeSQL(strbuf);
+            if (result > 0) {
+                db.commit();
+            } else {
+                db.rollback();
+            }
+        } catch (Exception e) {
+            db.rollback();
+            MyLogger.error(this.getClass().getName(), e);
+            throw e;
+        } finally {
+            db.closeConnection();
+        }
+    }
 
  /**
   * @FunctionName: getUserInfo

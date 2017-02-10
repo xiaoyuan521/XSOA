@@ -39,6 +39,7 @@ public class MessageRecord extends BaseServlet {
 
     public static final String OFF_LINE     = "OFF_LINE"; //离线消息
     public static final String WINDOW_CLOSE     = "WINDOW_CLOSE"; //关闭窗口消息
+    public static final String SET_MESSAGE_READ = "SET_MESSAGE_READ";//设置已读
 
 
     /* 本Servlet对应的Service */
@@ -68,6 +69,8 @@ public class MessageRecord extends BaseServlet {
             getOfflineList(inputdata);
         } else if (SELECT_MESSAGE.equals(CMD)) {
             getMessageList(inputdata);
+        } else if (SET_MESSAGE_READ.equals(CMD)) {
+            setMessageRead(inputdata);
         }
     }
 
@@ -176,6 +179,7 @@ public class MessageRecord extends BaseServlet {
      List<Pojo_MESSAGE> dataList = new ArrayList<Pojo_MESSAGE>();
      Pojo_MESSAGE data;
      try {
+         service.setMessageRead(from, to, type);
          chatList = service.getMessageList(from, to, type);
          for (Pojo_MESSAGE po : chatList) {
              data = new Pojo_MESSAGE();
@@ -185,6 +189,7 @@ public class MessageRecord extends BaseServlet {
              data.setMESSAGE_TIME(po.getMESSAGE_TIME());
              data.setMESSAGE_TYPE(po.getMESSAGE_TYPE());
              if ("group".equals(type)) {
+                 data.setMESSAGE_READ(po.getMESSAGE_READ());
                  data.setNAME(service.getUserInfo(po.getMESSAGE_FROM()).getYHXX_YHMC());
                  data.setFACE(service.getUserInfo(po.getMESSAGE_FROM()).getYHXX_GRZP());
              }
@@ -193,6 +198,22 @@ public class MessageRecord extends BaseServlet {
          arrResult.add(dataList);
      } catch (Exception e) {
          MyLogger.error(this.getClass().getName(), e);
+     } finally {
+         // 输出Ajax返回结果。
+         print(arrResult);
+     }
+ }
+
+ private void setMessageRead(Map<String, String[]> inputdata) throws Exception{
+     String from = this.getString(inputdata, "FROM");// 发送方
+     String to = this.getString(inputdata, "TO");// 接收方
+     String type = this.getString(inputdata, "TYPE");// 类型
+
+     try{
+         service.setMessageRead(to, from, type);
+     } catch (Exception e) {
+         MyLogger.error(this.getClass().getName(), e);
+         arrResult.add("ERROR");
      } finally {
          // 输出Ajax返回结果。
          print(arrResult);

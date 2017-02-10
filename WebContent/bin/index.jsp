@@ -100,12 +100,9 @@ function login_click(){
             var CMD = response[0];
 
             if(CMD=="CMD_OK"){
-                var listFriend = strJsonToJsonByFriend();
-                var listGroup = strJsonToJsonByGroup();
-                setFriendFile(listFriend);
-                setGroupFile(listGroup);
-                /* 密钥校验成功，跳转主操作页面。 */
-                location.href='<%=basePath%>/bin/jsp/home/home.jsp';
+                var list = response[1];
+                var obj = response[2];
+                getJsonByList(list, obj);
             }else if(CMD=="CMD_NOEXIST"){
                alert("用户不存在。");
                $('#username').focus();
@@ -139,138 +136,87 @@ function refreshDateTime(){
     document.getElementById("dateShow").innerHTML= "北京时间："+curentDateTime;
 }
 
-function setFriendFile(list) {
+function setFile(friend_list, group_list) {
     $.ajax({
         async:false,
         type: "post",
         dataType: "json",
         url: "<%=basePath%>/ServletLogin",
         data: {
-            CMD         : "<%=ServletLogin.CMD_SET_FRIEND %>",
-            FLAG      : "friend",
-            LIST        : list
+            CMD         : "<%=ServletLogin.CMD_SET_JSON %>",
+            FRIEND_LIST : friend_list,
+            GROUP_LIST  : group_list
         },
         complete :function(){},
         success: function(response){
-            //var CMD = response[0];
+            var CMD = response[0];
+            if(CMD=="CMD_OK") {
+                location.href='<%=basePath%>/bin/jsp/home/home.jsp';
+            }
         }
     });
 }
 
-function setGroupFile(list) {
-    $.ajax({
-        async:false,
-        type: "post",
-        dataType: "json",
-        url: "<%=basePath%>/ServletLogin",
-        data: {
-            CMD         : "<%=ServletLogin.CMD_SET_GROUP %>",
-            FLAG      : "group",
-            LIST        : list
-        },
-        complete :function(){},
-        success: function(response){
-            //var CMD = response[0];
-        }
-    });
-}
-
-function strJsonToJsonByFriend() {
-    var list = [];
-    var listLr=[];
+function getJsonByList(list, obj){
+    //作成好友数据
+    var listLr_friend=[];
     var listGl=[];
     var groupLr={};
     var groupGl={};
     var groupList=[];
-    var json={};
-    var obj;
-	$.ajax({
-		async     : false,
-		type      : "post",
-		dataType  : "json",
-		url: "<%=basePath%>/ServletLogin",
-		data: {
-			CMD    : "<%=ServletLogin.CMD_SELECT%>"
-		},
-		complete :function(){},
-		success: function(response){
-  	    	list = response[0];
-  	    	obj = response[1];
-        	$.each(list, function(k, v) {
-      	        if ($('#username').val() != v.YHXX_YHID) {
-      	            var dataLr={};
-                      var face = "<%=basePath%>/bin/upload/"+ v.YHXX_GRZP;
-                      dataLr['id'] = v.YHXX_YHID;
-                      dataLr['name'] = v.YHXX_YHMC;
-                      dataLr['face'] =  face;
-                      listLr.push(dataLr);
-      	        }
-        	});
-        	var dataGl={};
-        	var faceGl = "<%=basePath%>/bin/upload/"+obj.YHXX_GRZP;
-        	dataGl['id'] = obj.YHXX_YHID;
-        	dataGl['name'] = obj.YHXX_YHMC;
-        	dataGl['face'] = faceGl;
-        	listGl.push(dataGl);
-
-        	groupLr['name'] = '狼友';
-        	groupLr['nums'] = listLr.length;
-        	groupLr['id'] = 1;
-        	groupLr['item'] = listLr;
-
-        	groupGl['name'] = '系统管理员';
-        	groupGl['nums'] = 1;
-        	groupGl['id'] = 2;
-        	groupGl['item'] = listGl;
-		}
-
+    var json_friend={};
+    $.each(list, function(k, v) {
+            var dataLr={};
+            var face = "<%=basePath%>/bin/upload/"+ v.YHXX_GRZP;
+            dataLr['id'] = v.YHXX_YHID;
+            dataLr['name'] = v.YHXX_YHMC;
+            dataLr['face'] =  face;
+            listLr_friend.push(dataLr);
 	});
+	var dataGl={};
+	var faceGl = "<%=basePath%>/bin/upload/"+obj.YHXX_GRZP;
+	dataGl['id'] = obj.YHXX_YHID;
+	dataGl['name'] = obj.YHXX_YHMC;
+	dataGl['face'] = faceGl;
+	listGl.push(dataGl);
+
+	groupLr['name'] = '狼友';
+	groupLr['nums'] = listLr_friend.length;
+	groupLr['id'] = 1;
+	groupLr['item'] = listLr_friend;
+
+	groupGl['name'] = '系统管理员';
+	groupGl['nums'] = 1;
+	groupGl['id'] = 2;
+	groupGl['item'] = listGl;
 	groupList.push(groupLr);
 	groupList.push(groupGl);
+	json_friend['data'] = groupList;
+	json_friend['status'] = 1;
+	json_friend['msg'] = 'ok';
+	var friend_list = JSON.stringify(json_friend);
 
-	json['data'] = groupList;
-	json['status'] = 1;
-	json['msg'] = 'ok';
-
-	var aa = JSON.stringify(json);
-    return aa;
-}
-function strJsonToJsonByGroup() {
-    var list = [];
-    var listLr=[];
+	//作成群组数据
+	var listLr_group=[];
     var groupList=[];
-    var json={};
-    var obj;
-	$.ajax({
-		async     : false,
-		type      : "post",
-		dataType  : "json",
-		url: "<%=basePath%>/ServletLogin",
-		data: {
-			CMD    : "<%=ServletLogin.CMD_SELECT%>"
-		},
-		complete :function(){},
-		success: function(response){
-  	    	list = response[0];
-  	    	obj = response[1];
-        	$.each(list, function(k, v) {
-      	        var dataLr={};
-                var face = "<%=basePath%>/bin/upload/"+ v.YHXX_GRZP;
-                dataLr['id'] = v.YHXX_YHID;
-                dataLr['name'] = v.YHXX_YHMC;
-                dataLr['face'] =  face;
-                listLr.push(dataLr);
-        	});
-		}
-
+    var json_group={};
+    $.each(list, function(k, v) {
+	        var dataLr={};
+        var face = "<%=basePath%>/bin/upload/"+ v.YHXX_GRZP;
+        dataLr['id'] = v.YHXX_YHID;
+        dataLr['name'] = v.YHXX_YHMC;
+        dataLr['face'] =  face;
+        listLr_group.push(dataLr);
 	});
-	json['data'] = listLr;
-	json['status'] = 1;
-	json['msg'] = 'ok';
 
-	var aa = JSON.stringify(json);
-    return aa;
+    json_group['data'] = listLr_group;
+    json_group['status'] = 1;
+    json_group['msg'] = 'ok';
+	var group_list = JSON.stringify(json_group);
+
+	setFile(friend_list, group_list);
 }
+
 </script>
 </head>
 <body class="signin">
@@ -289,7 +235,6 @@ function strJsonToJsonByGroup() {
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 玩家信息</li>
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 交流论坛</li>
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 排位系统</li>
-                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 狼人瞬间</li>
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> web聊天</li>
                         <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> 待开发...</li>
                     </ul>

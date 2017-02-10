@@ -44,6 +44,7 @@ public class MyWebSocket{
     List <String> userList = new ArrayList<String>();
     List <String> onlineList = new ArrayList<String>();
     List <String> offlineList = new ArrayList<String>();
+    List<Pojo_MESSAGE> unReadList = new ArrayList<Pojo_MESSAGE>();
     /**
      * 连接建立成功调用的方法
      * @param session  可选的参数。session为与某个客户端的连接会话，需要通过它来给客户端发送数据
@@ -67,6 +68,7 @@ public class MyWebSocket{
                 }
                 userList.add(po.getYHXX_YHID());
             }
+            unReadList = service_m.getUnReadList(String.valueOf(uid));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -77,6 +79,7 @@ public class MyWebSocket{
         toMessage.put("userid", String.valueOf(uid));
         toMessage.put("username", username);
         toMessage.put("onlineList", onlineList);
+        toMessage.put("unReadList", unReadList);
         for (int i=0;i<userList.size();i++) {
             //if(map.containsKey(userList.get(i)) && !userList.get(i).equals(String.valueOf(uid))) {
             if(map.containsKey(userList.get(i))) {

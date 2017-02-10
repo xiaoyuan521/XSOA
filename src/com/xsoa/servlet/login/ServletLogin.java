@@ -1,9 +1,10 @@
 package com.xsoa.servlet.login;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,7 @@ public class ServletLogin extends BaseServlet {
 	/* 命令定义部分 */
 	public static final String CMD_USER_CHECK = "CMD_USER_CHECK";
 	public static final String CMD_SELECT = "CMD_SELECT";
-	public static final String CMD_SET_FRIEND = "CMD_SET_FRIEND";
-	public static final String CMD_SET_GROUP = "CMD_SET_GROUP";
+	public static final String CMD_SET_JSON = "CMD_SET_JSON";
 
 	// 本Servlet对应的Service
 	private ServiceLogin service;
@@ -56,10 +56,8 @@ public class ServletLogin extends BaseServlet {
 
 		if (CMD_USER_CHECK.equals(CMD)) {
 			checkUser(inputdata);
-		} else if (CMD_SET_FRIEND.equals(CMD)) {
+		} else if (CMD_SET_JSON.equals(CMD)) {
 		    setJsonFile(inputdata, request);
-        } else if (CMD_SET_GROUP.equals(CMD)) {
-            setJsonFile(inputdata, request);
         } else if (CMD_SELECT.equals(CMD)) {
 		    selectList(inputdata);
 		}
@@ -121,6 +119,12 @@ public class ServletLogin extends BaseServlet {
 			setSessionObject(SessionAttribute.LOGIN_MENU, menuList);//用户菜单信息存入Session
 			setSessionObject(SessionAttribute.LOGIN_MENU_JSON, JSONArray.fromObject(menuList).toString());
 			arrResult.add("CMD_OK");
+			List<Pojo_YHXX> dataList = new ArrayList<Pojo_YHXX>();
+		    Pojo_YHXX data = new Pojo_YHXX();
+		    dataList = service.getDataList();
+            data = service.getGLY();
+            arrResult.add(dataList);
+            arrResult.add(data);
 
 		} catch (Exception e) {
 			arrResult.add("CMD_EXCEPTION");
@@ -166,59 +170,84 @@ public class ServletLogin extends BaseServlet {
      * @date 2017-01-13
      */
     private void setJsonFile(Map<String, String[]> inputdata, HttpServletRequest request) throws Exception {
-        String jsonList = this.getString(inputdata, "LIST");// 用户ID
-        String flag = this.getString(inputdata, "FLAG");
-        String filePath = "";
-        if ("friend".equals(flag)) {
-            filePath = request.getSession().getServletContext().getRealPath("/bin/friend.json");
-        } else if ("group".equals(flag)) {
-            filePath = request.getSession().getServletContext().getRealPath("/bin/groups.json");
-        }
+        String friendList = this.getString(inputdata, "FRIEND_LIST");// 用户ID
+        String groupList = this.getString(inputdata, "GROUP_LIST");// 用户ID
+        String friendPath = "";
+        String groupPath = "";
+
+        friendPath = request.getSession().getServletContext().getRealPath("/bin/friend.json");
+        groupPath = request.getSession().getServletContext().getRealPath("/bin/groups.json");
 
         try {
-            File file = new File(filePath);
-            char [] stack = new char[1024];
-            int top=-1;
-            StringBuffer sb = new StringBuffer();
-            char [] charArray = jsonList.toCharArray();
-            for(int i=0;i<charArray.length;i++){
-                char c= charArray[i];
-                if ('{' == c || '[' == c) {
-                    stack[++top] = c;
-                    sb.append("\n"+charArray[i] + "\n");
+            String sb_friend = getStringByJson(friendList);
+            String sb_group = getStringByJson(groupList);
+            //FileUtils.writeStringToFile(file, sb.toString(), "UTF-8");
+            File file_friend = new File(friendPath);
+            FileOutputStream fos_friend = new FileOutputStream(file_friend);
+            OutputStreamWriter osw_friend = new OutputStreamWriter(fos_friend,"UTF-8");
+            BufferedWriter out_friend = new BufferedWriter(osw_friend);
+            out_friend.write(sb_friend);
+            out_friend.flush();
+            out_friend.close();
+
+
+            File file_group = new File(groupPath);
+            FileOutputStream fos_group = new FileOutputStream(file_group);
+            OutputStreamWriter osw_group = new OutputStreamWriter(fos_group,"UTF-8");
+            BufferedWriter out_group = new BufferedWriter(osw_group);
+            out_group.write(sb_group);
+            out_group.flush();
+            out_group.close();
+//            Writer write = new FileWriter(file);
+//            write.write(sb.toString());
+//            write.flush();
+//            write.close();
+            arrResult.add("CMD_OK");
+
+        } catch (Exception e) {
+            arrResult.add("CMD_EXCEPTION");
+        } finally {
+            // 输出Ajax返回结果。
+            print(arrResult);
+        }
+    }
+
+    private String getStringByJson(String jsonList) {
+        StringBuffer sb = new StringBuffer();
+        char [] stack = new char[1024];
+        int top=-1;
+        char [] charArray = jsonList.toCharArray();
+        for(int i=0;i<charArray.length;i++){
+            char c= charArray[i];
+            if ('{' == c || '[' == c) {
+                stack[++top] = c;
+                sb.append("\n"+charArray[i] + "\n");
+                for (int j = 0; j <= top; j++) {
+                    sb.append("\t");
+                }
+                continue;
+            }
+            if ((i + 1) <= (charArray.length - 1)) {
+                char d = charArray[i+1];
+                if ('}' == d || ']' == d) {
+                    top--;
+                    sb.append(charArray[i] + "\n");
                     for (int j = 0; j <= top; j++) {
                         sb.append("\t");
                     }
                     continue;
                 }
-                if ((i + 1) <= (charArray.length - 1)) {
-                    char d = charArray[i+1];
-                    if ('}' == d || ']' == d) {
-                        top--;
-                        sb.append(charArray[i] + "\n");
-                        for (int j = 0; j <= top; j++) {
-                            sb.append("\t");
-                        }
-                        continue;
-                    }
-                }
-                if (',' == c) {
-                    sb.append(charArray[i] + "");
-                    for (int j = 0; j <= top; j++) {
-                        sb.append("");
-                    }
-                    continue;
-                }
-                sb.append(c);
             }
-            Writer write = new FileWriter(file);
-            write.write(sb.toString());
-            write.flush();
-            write.close();
-
-        } catch (Exception e) {
-            arrResult.add("CMD_EXCEPTION");
+            if (',' == c) {
+                sb.append(charArray[i] + "");
+                for (int j = 0; j <= top; j++) {
+                    sb.append("");
+                }
+                continue;
+            }
+            sb.append(c);
         }
+        return sb.toString();
     }
 
 }

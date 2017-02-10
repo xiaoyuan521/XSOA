@@ -24,6 +24,12 @@ public class Pojo_MESSAGE implements Serializable {
     /** The value of the simple 消息类型 property. */
     private String MESSAGE_TYPE;
 
+    /** The value of the simple 是否已读(0已读 1未读) property. */
+    private String MESSAGE_READ;
+
+    /** The value of the simple 未读消息数 property. */
+    private String UNREAD_COUNT;
+
     /** The value of the simple 头像 property. */
     private String FACE;
 
@@ -76,6 +82,22 @@ public class Pojo_MESSAGE implements Serializable {
 
     public void setMESSAGE_TYPE(String mESSAGE_TYPE) {
         MESSAGE_TYPE = mESSAGE_TYPE;
+    }
+
+    public String getMESSAGE_READ() {
+        return MESSAGE_READ;
+    }
+
+    public void setMESSAGE_READ(String mESSAGE_READ) {
+        MESSAGE_READ = mESSAGE_READ;
+    }
+
+    public String getUNREAD_COUNT() {
+        return UNREAD_COUNT;
+    }
+
+    public void setUNREAD_COUNT(String uNREAD_COUNT) {
+        UNREAD_COUNT = uNREAD_COUNT;
     }
 
     public String getFACE() {
