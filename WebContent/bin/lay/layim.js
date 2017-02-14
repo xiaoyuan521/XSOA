@@ -915,7 +915,7 @@ var websocket = null;
 //判断当前浏览器是否支持WebSocket
 if('WebSocket' in window){
   var uid = userInfo.userid;
-  var websocket = new WebSocket("ws://192.168.196.142:8080/LRSXT/wsServlet/"+uid);
+  var websocket = new WebSocket("ws://127.0.0.1:8080/LRSXT/wsServlet/"+uid);
   startListener(websocket, userInfo);
 }
 else{

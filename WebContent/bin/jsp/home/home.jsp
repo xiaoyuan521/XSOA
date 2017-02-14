@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="com.xsoa.pojo.basetable.Pojo_YHXX" %>
 <%@ page import="com.framework.session.SessionAttribute"%>
+<%@ page import="com.xsoa.servlet.servlet1040000.Servlet1040130"%>
 
 <%
 	String path = request.getContextPath();
@@ -44,6 +45,7 @@ window.onload=function(){
 
    //$("#main_frame").attr("src",basePath + "/bin/img/logo.jpg");
    setInterval('refreshDateTime()',100);
+   getJrfg();
    //openWindow();
 };
 
@@ -53,6 +55,37 @@ window.onresize=function(){
      var strSrc = $('#main_frame').attr("src");
    	 $("#main_frame").attr("src",strSrc);
 };
+
+function getJrfg(){
+	$.ajax({
+	async     : false,
+	type      : "post",
+	dataType  : "json",
+	url: "<%=basePath%>/Servlet1040130",
+	data: {
+		CMD    : "<%=Servlet1040130.CMD_SELECT_JRFG%>"
+	},
+	complete :function(response){},
+	success: function(response){
+	    var sp = $(".notice");
+	    sp.empty();
+	    var strResult = response[0];
+		if (strResult == "SUCCESS") {
+			var resultRecord = response[1];
+			var html = "";
+			html += "<marquee scrollAmount=3 width='700' onmouseover='this.stop()' onmouseout='this.start()'>";
+			html += "<table cellpadding='0' cellspacing='0'><tr><td><img src='<%=basePath%>/bin/img/home/qizi.gif' width='25' height='35' /></td>";
+			html += "<td>&nbsp;&nbsp;&nbsp;</td><td>";
+			html += "<a style='cursor: pointer; color:#FFFFFF'>今日法官:"+resultRecord.JRFG_FGID+"&nbsp;&nbsp;&nbsp;备用法官:"+resultRecord.JRFG_BYID;
+			html += "</td></tr></table></marquee>";
+			sp.append(html);
+		} else {
+
+		}
+	}
+	});
+}
+
 
 function openWindow(){
     $.layer({
@@ -139,6 +172,8 @@ function logout(){
           </div>
         </div>
         <div class="logo"><IMG src="<%=basePath%>/bin/img/home/logo.png"></div>
+        <div class="notice">
+        </div>
     </div>
 </div>
 
